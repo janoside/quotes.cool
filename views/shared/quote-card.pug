@@ -78,6 +78,9 @@
 							button.btn.btn-outline-secondary.py-0.btn-sm.dropdown-toggle(type="button", data-toggle="dropdown", aria-haspopup="true", aria-expanded="false")
 								i.fas.fa-cog
 							.dropdown-menu.dropdown-menu-right
+								a.dropdown-item(href=`/share/${quote._id}`)
+									i.fas.fa-share-alt.mr-2
+									| Share this quote (public link)
 								a.dropdown-item(href=`/quote/${quote._id}/edit`)
 									i.far.fa-edit.mr-2
 									| Edit this quote

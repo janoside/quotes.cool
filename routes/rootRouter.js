@@ -196,6 +196,16 @@ router.get("/quote/:quoteId", asyncHandler(async (req, res, next) => {
 	res.render("quote");
 }));
 
+// publicly shareable link for a single quote
+router.get("/share/:quoteId", asyncHandler(async (req, res, next) => {
+	const quoteId = req.params.quoteId;
+	const quote = await db.findObject("quotes", {_id:ObjectID(quoteId)});
+
+	res.locals.quote = quote;
+
+	res.render("quote");
+}));
+
 router.get("/quote/:quoteId/edit", asyncHandler(async (req, res, next) => {
 	const quoteId = req.params.quoteId;
 	const quote = await db.findObject("quotes", {_id:ObjectID(quoteId)});
