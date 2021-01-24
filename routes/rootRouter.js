@@ -528,29 +528,35 @@ router.get("/imports", asyncHandler(async (req, res, next) => {
 
 router.get("/search", asyncHandler(async (req, res, next) => {
 	const query = req.query.query;
-	const quotes = await db.findObjects("quotes", {
-		$and: [
-			{
-				$or: [
-					{ userId: req.session.user._id.toString() },
-					{ visibility: "public" }
-				]
-			},
-			{
-				$or:[
-					{text:new RegExp(query, "i")},
-					{parts:new RegExp(query, "i")},
-					{speakers:new RegExp(query, "i")},
-					{speakerContexts:new RegExp(query, "i")}
-				]
-			}
-		]
-	}, {
-		sort: [["importDate", 1], ["importIndex", 1], ["date", 1]]
-	});
+
+	const quotes = await db.findObjects(
+		"quotes",
+		{
+			$and: [
+				{
+					$or: [
+						{ userId: req.session.user._id.toString() },
+						{ visibility: "public" }
+					]
+				},
+				{
+					$or:[
+						{text:new RegExp(query, "i")},
+						{parts:new RegExp(query, "i")},
+						{speakers:new RegExp(query, "i")},
+						{speakerContexts:new RegExp(query, "i")}
+					]
+				}
+			]
+		},
+		{
+			sort: [["importDate", 1], ["importIndex", 1], ["date", 1]]
+		});
 	
 	res.locals.query = query;
 	res.locals.quotes = quotes;
+	res.locals.tags = [];
+	res.locals.tagsData = null;
 
 	res.render("search-quotes");
 }));
