@@ -7,6 +7,11 @@ block content
 		span.badge.badge-primary.mr-1
 				i.fas.fa-child.mr-2
 				| #{speaker}
+		|  tagged 
+		each tag in tags
+			span.badge.badge-primary.mr-1
+				i.fas.fa-tag.mr-2
+				| #{tag}
 
 	hr
 

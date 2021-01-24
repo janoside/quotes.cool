@@ -278,60 +278,178 @@ router.get("/:username/quotes", asyncHandler(async (req, res, next) => {
 	}
 
 	const user = await db.findObject("users", {username:username});
-	const quotes = await db.findObjects("quotes", {
-		userId:user._id.toString()
-	}, {
-		sort: [["importDate", 1], ["importIndex", 1], ["date", 1]]
-	});
+	const quotes = await db.findObjects(
+		"quotes",
+		{ userId:user._id.toString() },
+		{
+			sort: [
+				["importDate", 1],
+				["importIndex", 1],
+				["date", 1]
+			]
+		});
+
+	const quotesCollection = await db.getCollection("quotes");
+	const tagsData = await quotesCollection.aggregate([
+		{ $match: { userId: req.session.user._id.toString() } },
+		{ $unwind: "$tags" },
+		{ $group: { _id: "$tags", count: { $sum: 1 } } },
+		{ $sort: { count: -1, _id: 1 }}
+	]).toArray();
 
 	res.locals.user = user;
 	res.locals.quotes = quotes;
+	res.locals.tags = [];
+	res.locals.tagsData = tagsData;
 
 	res.render("user-quotes");
 }));
 
-router.get("/tag/:tag", asyncHandler(async (req, res, next) => {
-	const tag = req.params.tag;
-	const quotes = await db.findObjects("quotes", {
-		$and: [
-			{
-				$or: [
-					{ userId: req.session.user._id.toString() },
-					{ visibility: "public" }
-				]
-			},
-			{ tags: tag }
-		]
-	}, {
-		sort: [["importDate", 1], ["importIndex", 1], ["date", 1]]
-	});
+router.get("/tags/:tags", asyncHandler(async (req, res, next) => {
+	const tags = req.params.tags.split(",").map(x => x.trim().toLowerCase());
 
-	res.locals.tag = tag;
+	const quotes = await db.findObjects(
+		"quotes",
+		{
+			$and: [
+				{
+					$or: [
+						{ userId: req.session.user._id.toString() },
+						{ visibility: "public" }
+					]
+				},
+				{ tags: { $all: tags }}
+			]
+		},
+		{
+			sort: [["importDate", 1], ["importIndex", 1], ["date", 1]]
+		}
+	);
+
+	const quotesCollection = await db.getCollection("quotes");
+	const tagsData = await quotesCollection.aggregate([
+		{ $match:
+			{
+				$and: [
+					{
+						$or: [
+							{ userId: req.session.user._id.toString() },
+							{ visibility: "public" }
+						]
+					},
+					{ tags: { $all: tags }}
+				]
+			}
+		},
+		{ $unwind: "$tags" },
+		{ $group: { _id: "$tags", count: { $sum: 1 } } },
+		{ $sort: { count: -1, _id: 1 }}
+	]).toArray();
+
+
+	res.locals.tags = tags;
 	res.locals.quotes = quotes;
+	res.locals.tagsData = tagsData;
 
 	res.render("tag-quotes");
 }));
 
 router.get("/speaker/:speaker", asyncHandler(async (req, res, next) => {
 	const speaker = req.params.speaker;
-	const quotes = await db.findObjects("quotes", {
-		$and: [
+	const quotes = await db.findObjects(
+		"quotes",
+		{
+			$and: [
+				{
+					$or: [
+						{ userId: req.session.user._id.toString() },
+						{ visibility: "public" }
+					]
+				},
+				{ speakers: speaker }
+			]
+		},
+		{
+			sort: [["importDate", 1], ["importIndex", 1], ["date", 1]]
+		});
+
+	const quotesCollection = await db.getCollection("quotes");
+	const tagsData = await quotesCollection.aggregate([
+		{ $match:
 			{
-				$or: [
-					{ userId: req.session.user._id.toString() },
-					{ visibility: "public" }
+				$and: [
+					{
+						$or: [
+							{ userId: req.session.user._id.toString() },
+							{ visibility: "public" }
+						]
+					},
+					{ speakers: speaker }
 				]
-			},
-			{ speakers: speaker }
-		]
-	}, {
-		sort: [["importDate", 1], ["importIndex", 1], ["date", 1]]
-	});
+			}
+		},
+		{ $unwind: "$tags" },
+		{ $group: { _id: "$tags", count: { $sum: 1 } } },
+		{ $sort: { count: -1, _id: 1 }}
+	]).toArray();
 
 	res.locals.speaker = speaker;
 	res.locals.quotes = quotes;
+	res.locals.tags = [];
+	res.locals.tagsData = tagsData;
 
 	res.render("speaker-quotes");
+}));
+
+router.get("/speaker/:speaker/tags/:tags", asyncHandler(async (req, res, next) => {
+	const speaker = req.params.speaker;
+	const tags = req.params.tags.split(",").map(x => x.trim().toLowerCase());
+
+	const quotes = await db.findObjects(
+		"quotes",
+		{
+			$and: [
+				{
+					$or: [
+						{ userId: req.session.user._id.toString() },
+						{ visibility: "public" }
+					]
+				},
+				{ speakers: speaker },
+				{ tags: { $all: tags }}
+			]
+		},
+		{
+			sort: [["importDate", 1], ["importIndex", 1], ["date", 1]]
+		});
+
+	const quotesCollection = await db.getCollection("quotes");
+	const tagsData = await quotesCollection.aggregate([
+		{ $match:
+			{
+				$and: [
+					{
+						$or: [
+							{ userId: req.session.user._id.toString() },
+							{ visibility: "public" }
+						]
+					},
+					{ speakers: speaker },
+					{ tags: { $all: tags }}
+				]
+			}
+		},
+		{ $unwind: "$tags" },
+		{ $group: { _id: "$tags", count: { $sum: 1 } } },
+		{ $sort: { count: -1, _id: 1 }}
+	]).toArray();
+
+	res.locals.speaker = speaker;
+	res.locals.quotes = quotes;
+	res.locals.tags = tags;
+	res.locals.tagsData = tagsData;
+
+	res.render("speaker-tags-quotes");
 }));
 
 router.get("/import", asyncHandler(async (req, res, next) => {

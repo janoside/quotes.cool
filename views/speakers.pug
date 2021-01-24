@@ -9,7 +9,7 @@ block content
 	if (speakersData)
 		each item in speakersData
 			a.btn.btn-primary.mr-2.mb-2(href=`/speaker/${item._id}`)
-				i.fas.fa-user-alt.mr-2
+				i.fas.fa-child.mr-2
 				| #{item._id} 
 				span.badge.badge-light #{item.count.toLocaleString()}
 

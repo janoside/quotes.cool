@@ -10,6 +10,10 @@ hr {
 	margin-top: 0.25rem;
 }
 
+h1 {
+	font-size: 1.75rem;
+}
+
 .speaker-non-link {
 	font-weight: bold;
 }
