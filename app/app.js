@@ -128,7 +128,7 @@ function quoteFromTextRepresentation(importChunk, user) {
 			line = line.trim().substring(1).trim();
 
 			quote.tags = line.split(",").map((item) => {
-				return item.trim();
+				return item.trim().toLowerCase();
 
 			}).filter((item) => {
 				return item.trim().length > 0;
