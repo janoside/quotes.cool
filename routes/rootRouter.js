@@ -529,6 +529,8 @@ router.get("/imports", asyncHandler(async (req, res, next) => {
 router.get("/search", asyncHandler(async (req, res, next) => {
 	const query = req.query.query;
 
+	const regex = new RegExp(query, "i");
+	
 	const quotes = await db.findObjects(
 		"quotes",
 		{
@@ -541,10 +543,11 @@ router.get("/search", asyncHandler(async (req, res, next) => {
 				},
 				{
 					$or:[
-						{text:new RegExp(query, "i")},
-						{parts:new RegExp(query, "i")},
-						{speakers:new RegExp(query, "i")},
-						{speakerContexts:new RegExp(query, "i")}
+						{ text: regex },
+						{ parts: regex },
+						{ speakers: regex },
+						{ speakerContexts: regex },
+						{ tags: regex }
 					]
 				}
 			]
