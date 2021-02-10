@@ -4,58 +4,60 @@
 	.card-body
 		.quote-body
 			if (quote.text)
-				h6
-					a.text-reset.text-decoration-none(href=quoteUrl)
-						| !{marked(quote.text.replace(/\n/g, "\n\n"))}
+				div
+					h6
+						a.text-reset.text-decoration-none(href=quoteUrl)
+							| !{marked(quote.text.replace(/\n/g, "\n\n"))}
 
-				h6.ml-1
-					footer.blockquote-footer
-						i
-							if (quote.speakers && quote.speakers.length > 0)
-								each speaker, speakerIndex in quote.speakers
-									if (quote.speakers.length > 2 && speakerIndex > 0)
-										| , 
-									
-									if (quote.speakers.length > 1 && speakerIndex == (quote.speakers.length - 1))
-										| & 
-									
-									if (noSpeakerLinks)
-										span.speaker-non-link.text-dark #{speaker}
-									else
-										a(href=`/speaker/${encodeURIComponent(speaker)}`) #{speaker ? speaker : "Unknown"}
+					h6.pl-0
+						footer.blockquote-footer
+							i
+								if (quote.speakers && quote.speakers.length > 0)
+									each speaker, speakerIndex in quote.speakers
+										if (quote.speakers.length > 2 && speakerIndex > 0)
+											| , 
+										
+										if (quote.speakers.length > 1 && speakerIndex == (quote.speakers.length - 1))
+											| & 
+										
+										if (noSpeakerLinks)
+											span.speaker-non-link.text-dark #{speaker}
+										else
+											a(href=`/speaker/${encodeURIComponent(speaker)}`) #{speaker ? speaker : "Unknown"}
 
-									if (quote.speakerContexts && quote.speakerContexts.length > speakerIndex && quote.speakerContexts[speakerIndex].trim().length > 0)
-										br
-										small (#{quote.speakerContexts[speakerIndex]})
-							else
-								if (noSpeakerLinks)
-									span.speaker-non-link.text-dark #{Unknown}
+										if (quote.speakerContexts && quote.speakerContexts.length > speakerIndex && quote.speakerContexts[speakerIndex].trim().length > 0)
+											br
+											small (#{quote.speakerContexts[speakerIndex]})
 								else
-									a(href=`/speaker/unknown`) Unknown
+									if (noSpeakerLinks)
+										span.speaker-non-link.text-dark #{Unknown}
+									else
+										a(href=`/speaker/unknown`) Unknown
 			
 			else if (quote.parts)
 				each part, partIndex in quote.parts
-					h6
-						a.text-reset.text-decoration-none(href=quoteUrl)
-							| !{marked(part.replace(/\n/g, "\n\n"))}
+					div(class=(partIndex < (quote.parts.length - 1) ? "mb-3" : null))
+						h6
+							a.text-reset.text-decoration-none(href=quoteUrl)
+								| !{marked(part.replace(/\n/g, "\n\n"))}
 
-					h6.ml-1
-						footer.blockquote-footer
-							i
-								if (quote.speakers && quote.speakers.length > partIndex)
-									if (noSpeakerLinks)
-										span.speaker-non-link.text-dark #{quote.speakers[partIndex]}
-									else
-										a(href=`/speaker/${encodeURIComponent(quote.speakers[partIndex])}`) #{quote.speakers[partIndex] ? quote.speakers[partIndex] : "Unknown"}
+						h6.pl-3
+							footer.blockquote-footer
+								i
+									if (quote.speakers && quote.speakers.length > partIndex)
+										if (noSpeakerLinks)
+											span.speaker-non-link.text-dark #{quote.speakers[partIndex]}
+										else
+											a(href=`/speaker/${encodeURIComponent(quote.speakers[partIndex])}`) #{quote.speakers[partIndex] ? quote.speakers[partIndex] : "Unknown"}
 
-									if (quote.speakerContexts && quote.speakerContexts.length > partIndex && quote.speakerContexts[partIndex].trim().length > 0)
-										br
-										small (#{quote.speakerContexts[partIndex]})
-								else
-									if (noSpeakerLinks)
-										span.speaker-non-link.text-dark Unknown
+										if (quote.speakerContexts && quote.speakerContexts.length > partIndex && quote.speakerContexts[partIndex].trim().length > 0)
+											br
+											small (#{quote.speakerContexts[partIndex]})
 									else
-										a(href=`/speaker/unknown`) Unknown
+										if (noSpeakerLinks)
+											span.speaker-non-link.text-dark Unknown
+										else
+											a(href=`/speaker/unknown`) Unknown
 		
 		hr
 
