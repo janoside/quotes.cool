@@ -203,6 +203,10 @@ router.get("/share/:quoteId", asyncHandler(async (req, res, next) => {
 
 	res.locals.quote = quote;
 
+	res.locals.noTagLinks = true;
+	res.locals.noUserLinks = true;
+	res.locals.noSpeakerLinks = true;
+
 	res.render("quote");
 }));
 
