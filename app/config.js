@@ -5,6 +5,7 @@ debug.enable(process.env.DEBUG || "app:*");
 
 global.appConfig = {
 	siteDomain: process.env.SITE_DOMAIN || "localhost",
+	serverPort: process.env.PORT || 3000,
 	siteName: process.env.SITE_NAME || "UnknownSite",
 	secureSite: process.env.SECURE_SITE == "true",
 	cookiePassword: process.env.COOKIE_PASSWORD || "c-is-for-cookie",
@@ -23,5 +24,12 @@ global.appConfig = {
 		}
 	}
 };
+
+global.appConfig.baseUrl = (global.appConfig.secureSite ? "https://" : "http://") + global.appConfig.siteDomain;
+if (global.appConfig.serverPort != (global.appConfig.secureSite ? 443 : 80)) {
+	global.appConfig.baseUrl += (":" + global.appConfig.serverPort);
+}
+
+global.appConfig.baseUrl += "/";
 
 module.exports = global.appConfig;
