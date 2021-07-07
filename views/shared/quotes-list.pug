@@ -32,6 +32,7 @@
 						small.text-muted.font-data.fw-light ##{(offset + quoteIndex + 1).toLocaleString()}
 
 					.d-block
+						- var quoteListPage = true;
 						include ./quote-card.pug
 
 		if (quoteCount > limit)

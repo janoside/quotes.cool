@@ -6,7 +6,7 @@ block headContent
 block content
 	+quoteListPageHeader(quoteCount, limit, offset, sort, paginationBaseUrl)
 		h1 #{quoteCount.toLocaleString()} Quote
-			| #{quoteCount.length != 1 ? "s" : ""} tagged 
+			| #{quoteCount != 1 ? "s" : ""} tagged 
 			each tag in tags
 				span.badge.bg-primary.me-1
 					i.fas.fa-tag.me-2
