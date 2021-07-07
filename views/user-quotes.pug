@@ -1,9 +1,14 @@
 extends layout
 
-block content
-	h1 #{quotes.length.toLocaleString()} Quote
-		| #{quotes.count != 1 ? "s" : ""}
+block headContent
+	title My Quotes
 
+block content
+	+quoteListPageHeader(quoteCount, limit, offset, sort, paginationBaseUrl)
+		h1 #{quoteCount.toLocaleString()} Quote
+			| #{quoteCount != 1 ? "s" : ""}
+	
+	
 	hr
 
 	include ./shared/quotes-list.pug

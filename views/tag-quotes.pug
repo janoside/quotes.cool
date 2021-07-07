@@ -1,12 +1,17 @@
 extends layout
 
+block headContent
+	title #{tags} quotes
+
 block content
-	h1 #{quotes.length.toLocaleString()} Quote
-		| #{quotes.length != 1 ? "s" : ""} tagged 
-		each tag in tags
-			span.badge.badge-primary.mr-1
-				i.fas.fa-tag.mr-2
-				| #{tag}
+	+quoteListPageHeader(quoteCount, limit, offset, sort, paginationBaseUrl)
+		h1 #{quoteCount.toLocaleString()} Quote
+			| #{quoteCount.length != 1 ? "s" : ""} tagged 
+			each tag in tags
+				span.badge.bg-primary.me-1
+					i.fas.fa-tag.me-2
+					| #{tag}
+
 
 	hr
 

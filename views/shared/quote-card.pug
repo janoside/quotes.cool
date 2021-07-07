@@ -5,11 +5,11 @@
 		.quote-body
 			if (quote.text)
 				div
-					h6
+					h6.mb-4
 						a.text-reset.text-decoration-none(href=quoteUrl)
 							| !{marked(quote.text.replace(/\n/g, "\n\n"))}
 
-					h6.pl-0
+					h6.ps-3
 						footer.blockquote-footer
 							i
 								if (quote.speakers && quote.speakers.length > 0)
@@ -37,11 +37,11 @@
 			else if (quote.parts)
 				each part, partIndex in quote.parts
 					div(class=(partIndex < (quote.parts.length - 1) ? "mb-3" : null))
-						h6
+						h6.mb-4
 							a.text-reset.text-decoration-none(href=quoteUrl)
 								| !{marked(part.replace(/\n/g, "\n\n"))}
 
-						h6.pl-3
+						h6.ps-3
 							footer.blockquote-footer
 								i
 									if (quote.speakers && quote.speakers.length > partIndex)
@@ -62,9 +62,9 @@
 		hr
 
 		.clearfix
-			.float-right
+			.float-end
 				if (quote.date)
-					i.far.fa-clock.mr-1
+					i.far.fa-clock.me-1
 					| #{utils.formatDate(quote.date, "MMM d, yyyy")}
 					
 					// TODO implement year pages
@@ -75,50 +75,50 @@
 						|  - #{utils.formatDate(quote.date, "h:mma").toLowerCase()}
 				
 				if (session.user && quote.userId == session.user._id)
-					div.text-right(class=(quote.date ? "mt-2" : false))
+					div.text-end(class=(quote.date ? "mt-2" : false))
 						.dropdown
-							button.btn.btn-outline-secondary.py-0.btn-sm.dropdown-toggle(type="button", data-toggle="dropdown", aria-haspopup="true", aria-expanded="false")
+							button.btn.btn-outline-secondary.py-0.btn-sm.dropdown-toggle(type="button", data-bs-toggle="dropdown", aria-haspopup="true", aria-expanded="false")
 								i.fas.fa-cog
-							.dropdown-menu.dropdown-menu-right
+							.dropdown-menu.dropdown-menu-end
 								a.dropdown-item(href=`javascript:void(0);` onclick=`copyTextToClipboard(baseUrl + 'share/${quote._id}')`)
-									i.far.fa-clipboard.mr-2
+									i.far.fa-clipboard.me-2
 									| Copy shareable link
 								a.dropdown-item(href=`/quote/${quote._id}/edit`)
-									i.far.fa-edit.mr-2
+									i.far.fa-edit.me-2
 									| Edit this quote
 								a.dropdown-item(href=`/quote/${quote._id}/raw`, target="_blank")
-									i.fas.fa-info-circle.mr-2
+									i.fas.fa-info-circle.me-2
 									| View raw data
 								a.dropdown-item.text-danger(href=`/quote/${quote._id}/delete`)
-									i.far.fa-trash-alt.mr-2
+									i.far.fa-trash-alt.me-2
 									| Delete this quote
 				
 				else
 					// no quote-management dropdown
 					
 			
-			.float-left(style="max-width: 60%;")
+			.float-start(style="max-width: 60%;")
 				if (quote.tags)
 					each tag, tagIndex in quote.tags
 						if (noTagLinks)
-							span.badge.badge-primary.mr-1
-								i.fas.fa-tag.mr-1
+							span.badge.bg-primary.me-1
+								i.fas.fa-tag.me-1
 								| #{tag}
 						else
-							a.badge.badge-primary.mr-1(href=`/tags/${tag}`)
-								i.fas.fa-tag.mr-1
+							a.badge.bg-primary.me-1(href=`/tags/${tag}`)
+								i.fas.fa-tag.me-1
 								| #{tag}
 
 				.mt-2
 					- var quoteUsername = quote.username;
 					if (noUserLinks)
 						span.badge.badge-info
-							i.fas.fa-user-circle.mr-1
+							i.fas.fa-user-circle.me-1
 							| #{quoteUsername}
 
 					else
 						a.badge.badge-info(href=`/${quoteUsername}/quotes`)
-							i.fas.fa-user-circle.mr-1
+							i.fas.fa-user-circle.me-1
 							| #{quoteUsername}
 
 				if (quote.link)
@@ -132,5 +132,5 @@
 
 		
 		.clearfix
-			.float-right
+			.float-end
 				

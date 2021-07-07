@@ -281,19 +281,44 @@ router.get("/:username/quotes", asyncHandler(async (req, res, next) => {
 		return;
 	}
 
-	const user = await db.findObject("users", {username:username});
-	const quotes = await db.findObjects(
-		"quotes",
-		{ userId:user._id.toString() },
-		{
-			sort: [
-				["importDate", 1],
-				["importIndex", 1],
-				["date", 1]
-			]
-		});
+	var limit = 25;
+	var offset = 0;
+	var sort = "date-desc";
+
+	if (req.query.limit) {
+		limit = parseInt(req.query.limit);
+	}
+
+	if (req.query.offset) {
+		offset = parseInt(req.query.offset);
+	}
+
+	if (req.query.sort) {
+		sort = req.query.sort;
+	}
+
+	const dateSortVal = sort.startsWith("date-") ? (sort.endsWith("-desc") ? -1 : 1) : -1;
 
 	const quotesCollection = await db.getCollection("quotes");
+
+	const quoteCount = await quotesCollection.countDocuments({userId: req.session.user._id.toString()});
+
+	const user = await db.findObject("users", {username: username});
+
+	const quotes = await db.findObjects(
+		"quotes",
+		{ userId: user._id.toString() },
+		{
+			sort: [
+				["importDate", dateSortVal],
+				["importIndex", dateSortVal],
+				["date", dateSortVal]
+			]
+		},
+		limit,
+		offset);
+
+	
 	const tagsData = await quotesCollection.aggregate([
 		{ $match: { userId: req.session.user._id.toString() } },
 		{ $unwind: "$tags" },
@@ -301,16 +326,41 @@ router.get("/:username/quotes", asyncHandler(async (req, res, next) => {
 		{ $sort: { count: -1, _id: 1 }}
 	]).toArray();
 
+	res.locals.username = username;
 	res.locals.user = user;
+	res.locals.quoteCount = quoteCount;
 	res.locals.quotes = quotes;
 	res.locals.tags = [];
 	res.locals.tagsData = tagsData;
+
+	res.locals.limit = limit;
+	res.locals.offset = offset;
+	res.locals.sort = sort;
+	res.locals.paginationBaseUrl = `./${username}/quotes`;
 
 	res.render("user-quotes");
 }));
 
 router.get("/tags/:tags", asyncHandler(async (req, res, next) => {
 	const tags = req.params.tags.split(",").map(x => x.trim().toLowerCase());
+
+	var limit = 25;
+	var offset = 0;
+	var sort = "date-desc";
+
+	if (req.query.limit) {
+		limit = parseInt(req.query.limit);
+	}
+
+	if (req.query.offset) {
+		offset = parseInt(req.query.offset);
+	}
+
+	if (req.query.sort) {
+		sort = req.query.sort;
+	}
+
+	const dateSortVal = sort.startsWith("date-") ? (sort.endsWith("-desc") ? -1 : 1) : -1;
 
 	const quotes = await db.findObjects(
 		"quotes",
@@ -326,11 +376,25 @@ router.get("/tags/:tags", asyncHandler(async (req, res, next) => {
 			]
 		},
 		{
-			sort: [["importDate", 1], ["importIndex", 1], ["date", 1]]
-		}
+			sort: [
+				["importDate", dateSortVal],
+				["importIndex", dateSortVal],
+				["date", dateSortVal]
+			]
+		},
+		limit,
+		offset
 	);
 
 	const quotesCollection = await db.getCollection("quotes");
+
+	const quoteCount = await quotesCollection.countDocuments(
+		{
+			userId: req.session.user._id.toString(),
+			tags: { $all: tags }
+		}
+	);
+
 	const tagsData = await quotesCollection.aggregate([
 		{ $match:
 			{
@@ -352,14 +416,39 @@ router.get("/tags/:tags", asyncHandler(async (req, res, next) => {
 
 
 	res.locals.tags = tags;
+	res.locals.quoteCount = quoteCount;
 	res.locals.quotes = quotes;
 	res.locals.tagsData = tagsData;
+
+	res.locals.limit = limit;
+	res.locals.offset = offset;
+	res.locals.sort = sort;
+	res.locals.paginationBaseUrl = `./tags/${req.params.tags}`;
 
 	res.render("tag-quotes");
 }));
 
 router.get("/speaker/:speaker", asyncHandler(async (req, res, next) => {
 	const speaker = req.params.speaker;
+
+	var limit = 25;
+	var offset = 0;
+	var sort = "date-desc";
+
+	if (req.query.limit) {
+		limit = parseInt(req.query.limit);
+	}
+
+	if (req.query.offset) {
+		offset = parseInt(req.query.offset);
+	}
+
+	if (req.query.sort) {
+		sort = req.query.sort;
+	}
+
+	const dateSortVal = sort.startsWith("date-") ? (sort.endsWith("-desc") ? -1 : 1) : -1;
+
 	const quotes = await db.findObjects(
 		"quotes",
 		{
@@ -374,10 +463,25 @@ router.get("/speaker/:speaker", asyncHandler(async (req, res, next) => {
 			]
 		},
 		{
-			sort: [["importDate", 1], ["importIndex", 1], ["date", 1]]
-		});
+			sort: [
+				["importDate", dateSortVal],
+				["importIndex", dateSortVal],
+				["date", dateSortVal]
+			]
+		},
+		limit,
+		offset
+	);
 
 	const quotesCollection = await db.getCollection("quotes");
+
+	const quoteCount = await quotesCollection.countDocuments(
+		{
+			userId: req.session.user._id.toString(),
+			speakers: speaker
+		}
+	);
+
 	const tagsData = await quotesCollection.aggregate([
 		{ $match:
 			{
@@ -398,15 +502,40 @@ router.get("/speaker/:speaker", asyncHandler(async (req, res, next) => {
 	]).toArray();
 
 	res.locals.speaker = speaker;
+	res.locals.quoteCount = quoteCount;
 	res.locals.quotes = quotes;
 	res.locals.tags = [];
 	res.locals.tagsData = tagsData;
+
+	res.locals.limit = limit;
+	res.locals.offset = offset;
+	res.locals.sort = sort;
+	res.locals.paginationBaseUrl = `./speaker/${speaker}`;
 
 	res.render("speaker-quotes");
 }));
 
 router.get("/speaker/:speaker/tags/:tags", asyncHandler(async (req, res, next) => {
 	const speaker = req.params.speaker;
+
+	var limit = 25;
+	var offset = 0;
+	var sort = "date-desc";
+
+	if (req.query.limit) {
+		limit = parseInt(req.query.limit);
+	}
+
+	if (req.query.offset) {
+		offset = parseInt(req.query.offset);
+	}
+
+	if (req.query.sort) {
+		sort = req.query.sort;
+	}
+
+	const dateSortVal = sort.startsWith("date-") ? (sort.endsWith("-desc") ? -1 : 1) : -1;
+
 	const tags = req.params.tags.split(",").map(x => x.trim().toLowerCase());
 
 	const quotes = await db.findObjects(
@@ -424,10 +553,26 @@ router.get("/speaker/:speaker/tags/:tags", asyncHandler(async (req, res, next) =
 			]
 		},
 		{
-			sort: [["importDate", 1], ["importIndex", 1], ["date", 1]]
-		});
+			sort: [
+				["importDate", dateSortVal],
+				["importIndex", dateSortVal],
+				["date", dateSortVal]
+			]
+		},
+		limit,
+		offset
+	);
 
 	const quotesCollection = await db.getCollection("quotes");
+
+	const quoteCount = await quotesCollection.countDocuments(
+		{
+			userId: req.session.user._id.toString(),
+			speakers: speaker,
+			tags: { $all: tags }
+		}
+	);
+
 	const tagsData = await quotesCollection.aggregate([
 		{ $match:
 			{
@@ -449,9 +594,15 @@ router.get("/speaker/:speaker/tags/:tags", asyncHandler(async (req, res, next) =
 	]).toArray();
 
 	res.locals.speaker = speaker;
+	res.locals.quoteCount = quoteCount;
 	res.locals.quotes = quotes;
 	res.locals.tags = tags;
 	res.locals.tagsData = tagsData;
+
+	res.locals.limit = limit;
+	res.locals.offset = offset;
+	res.locals.sort = sort;
+	res.locals.paginationBaseUrl = `./speaker/${speaker}/tags/${req.params.tags}`;
 
 	res.render("speaker-tags-quotes");
 }));
@@ -533,6 +684,24 @@ router.get("/imports", asyncHandler(async (req, res, next) => {
 router.get("/search", asyncHandler(async (req, res, next) => {
 	const query = req.query.query;
 
+	var limit = 25;
+	var offset = 0;
+	var sort = "date-desc";
+
+	if (req.query.limit) {
+		limit = parseInt(req.query.limit);
+	}
+
+	if (req.query.offset) {
+		offset = parseInt(req.query.offset);
+	}
+
+	if (req.query.sort) {
+		sort = req.query.sort;
+	}
+
+	const dateSortVal = sort.startsWith("date-") ? (sort.endsWith("-desc") ? -1 : 1) : -1;
+
 	const regex = new RegExp(query, "i");
 	
 	const quotes = await db.findObjects(
@@ -557,13 +726,68 @@ router.get("/search", asyncHandler(async (req, res, next) => {
 			]
 		},
 		{
-			sort: [["importDate", 1], ["importIndex", 1], ["date", 1]]
-		});
+			sort: [
+				["importDate", dateSortVal],
+				["importIndex", dateSortVal],
+				["date", dateSortVal]
+			]
+		},
+		limit,
+		offset
+	);
+
+	const quotesCollection = await db.getCollection("quotes");
+
+	const quoteCount = await quotesCollection.countDocuments(
+		{
+			$and: [
+				{
+					$or: [
+						{ userId: req.session.user._id.toString() },
+						{ visibility: "public" }
+					]
+				},
+				{
+					$or:[
+						{ text: regex },
+						{ parts: regex },
+						{ speakers: regex },
+						{ speakerContexts: regex },
+						{ tags: regex }
+					]
+				}
+			]
+		}
+	);
+
+	const tagsData = await quotesCollection.aggregate([
+		{
+			$match: {
+				userId: req.session.user._id.toString(),
+				$or:[
+					{ text: regex },
+					{ parts: regex },
+					{ speakers: regex },
+					{ speakerContexts: regex },
+					{ tags: regex }
+				]
+			}
+		},
+		{ $unwind: "$tags" },
+		{ $group: { _id: "$tags", count: { $sum: 1 } } },
+		{ $sort: { count: -1, _id: 1 }}
+	]).toArray();
 	
 	res.locals.query = query;
+	res.locals.quoteCount = quoteCount;
 	res.locals.quotes = quotes;
 	res.locals.tags = [];
-	res.locals.tagsData = null;
+	res.locals.tagsData = tagsData;
+
+	res.locals.limit = limit;
+	res.locals.offset = offset;
+	res.locals.sort = sort;
+	res.locals.paginationBaseUrl = `./search?query=${query}`;
 
 	res.render("search-quotes");
 }));
@@ -719,13 +943,38 @@ router.get("/list/:listId/:quoteId", asyncHandler(async (req, res, next) => {
 	res.render("quote");
 }));
 
+router.get("/changeSetting", asyncHandler(async (req, res, next) => {
+	if (req.query.name) {
+		if (!req.session.userSettings) {
+			req.session.userSettings = {};
+		}
+
+		req.session.userSettings[req.query.name] = req.query.value;
+
+		var userSettings = JSON.parse(req.cookies["user-settings"] || "{}");
+		userSettings[req.query.name] = req.query.value;
+
+		res.cookie("user-settings", JSON.stringify(userSettings));
+	}
+
+	res.redirect(req.headers.referer);
+}));
+
 // export all quotes for current user
 router.get("/export", asyncHandler(async (req, res, next) => {
-	const quotes = await db.findObjects("quotes", {
-		userId:req.session.user._id.toString()
-	}, {
-		sort: [["importDate", 1], ["importIndex", 1], ["date", 1]]
-	});
+	const quotes = await db.findObjects(
+		"quotes",
+		{
+			userId:req.session.user._id.toString()
+		},
+		{
+			sort: [
+				["importDate", 1],
+				["importIndex", 1],
+				["date", 1]
+			]
+		}
+	);
 
 	var exportContent = "";
 	quotes.forEach((quote) => {

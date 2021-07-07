@@ -1,31 +1,40 @@
 .row
 	if (tagsData)
-		.col-lg-2.col-md-12
+		.col-md-0.col-lg-2.d-none.d-lg-block
 			each item in tagsData
 				if (tags.includes(item._id))
 					div.d-lg-block.d-inline
-						a.btn.btn-success.btn-sm.mr-1.mb-2(href=`${speaker ? ("/speaker/" + speaker) : ""}/tags/${item._id}`)
+						a.btn.btn-success.btn-sm.mb-2(href=`${speaker ? ("/speaker/" + speaker) : ""}/tags/${item._id}`)
 							small
-								i.fas.fa-tag.mr-2
+								i.fas.fa-tag.me-2
 								| #{item._id} 
-								span.badge.badge-light #{item.count.toLocaleString()}
+								span.badge.bg-light.text-dark.ms-1 #{item.count.toLocaleString()}
 
 			each item in tagsData
 				if (!tags.includes(item._id))
 					div.d-lg-block.d-inline
-						a.btn.btn-primary.btn-sm.mr-1.mb-2(href=`${speaker ? ("/speaker/" + speaker) : ""}/tags/${item._id}`)
+						a.btn.btn-primary.btn-sm.mb-2(href=`${speaker ? ("/speaker/" + speaker) : ""}/tags/${item._id}`)
 							small
-								i.fas.fa-tag.mr-2
+								i.fas.fa-tag.me-2
 								| #{item._id} 
-								span.badge.badge-light #{item.count.toLocaleString()}
+								span.badge.bg-light.text-dark.ms-1 #{item.count.toLocaleString()}
 
 						if (!tags.includes(item._id) && tags.length > 0)
-							a.btn.btn-sm.btn-secondary.mr-2.mb-2(href=`${speaker ? ("/speaker/" + speaker) : ""}/tags/${tags.slice().concat([item._id]).join(",")}`, title=`Add filter: ${item._id}`, data-toggle="tooltip")
+							a.btn.btn-sm.btn-secondary.ms-1.mb-2(href=`${speaker ? ("/speaker/" + speaker) : ""}/tags/${tags.slice().concat([item._id]).join(",")}`, title=`Add filter: ${item._id}`, data-bs-toggle="tooltip")
 								small
 									| + 
 
-	div(class=(tagsData ? "col-md-10" : "col-md-12"))
-		.grid
-			each quote, quoteIndex in quotes
-				.grid-item.col-xl-4.col-sm-6.p-0.px-md-2
-					include ./quote-card.pug
+	.col-md-12.col-lg-10
+		each quote, quoteIndex in quotes
+			.col.p-0.px-lg-2
+				.clearfix
+					.float-start.me-2.mt-2
+						small.text-muted.font-data.fw-light ##{(offset + quoteIndex + 1).toLocaleString()}
+
+					.d-block
+						include ./quote-card.pug
+
+		if (quoteCount > limit)
+			hr
+
+			+pagination(limit, offset, sort, quoteCount, paginationBaseUrl, "center")

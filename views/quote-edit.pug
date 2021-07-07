@@ -5,7 +5,8 @@ block content
 	hr
 
 	form(method="post", action=`/quote/${quote._id}/edit`)
-		fieldset.form-group
+		fieldset.mb-4
 			textarea#text.form-control(name="content", rows="15") #{quoteTextRepresentation}
 
-		button.btn.btn-primary.btn-block(type="submit") Save
+		.d-grid
+			button.btn.btn-primary(type="submit") Save

@@ -8,10 +8,10 @@ block content
 
 	if (speakersData)
 		each item in speakersData
-			a.btn.btn-primary.mr-2.mb-2(href=`/speaker/${item._id}`)
-				i.fas.fa-child.mr-2
+			a.btn.btn-primary.me-2.mb-2(href=`/speaker/${item._id}`)
+				i.fas.fa-child.me-2
 				| #{item._id} 
-				span.badge.badge-light #{item.count.toLocaleString()}
+				span.badge.bg-light.text-dark.ms-1 #{item.count.toLocaleString()}
 
 		if (false)
 			pre

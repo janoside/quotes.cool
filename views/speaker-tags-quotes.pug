@@ -1,17 +1,22 @@
 extends layout
 
+block headContent
+	title #{speaker} #{tags} quotes
+
 block content
-	h1 #{quotes.length} Quote
-		| #{quotes.length != 1 ? "s" : ""}
-		|  from 
-		span.badge.badge-primary.mr-1
-				i.fas.fa-child.mr-2
-				| #{speaker}
-		|  tagged 
-		each tag in tags
-			span.badge.badge-primary.mr-1
-				i.fas.fa-tag.mr-2
-				| #{tag}
+	+quoteListPageHeader(quoteCount, limit, offset, sort, paginationBaseUrl)
+		h1 #{quoteCount.toLocaleString()} Quote
+			| #{quoteCount != 1 ? "s" : ""}
+			|  from 
+			a.badge.bg-primary.me-1(href=`./speaker/${speaker}`)
+					i.fas.fa-child.me-2
+					| #{speaker}
+			|  tagged 
+			each tag in tags
+				span.badge.bg-primary.me-1
+					i.fas.fa-tag.me-2
+					| #{tag}
+	
 
 	hr
 
