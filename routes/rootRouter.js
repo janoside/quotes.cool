@@ -310,10 +310,10 @@ router.get("/:username/quotes", asyncHandler(async (req, res, next) => {
 		{ userId: user._id.toString() },
 		{
 			sort: [
+				["createdAt", dateSortVal],
 				["importDate", dateSortVal],
 				["importIndex", dateSortVal],
-				["date", dateSortVal],
-				["createdAt", dateSortVal]
+				["date", dateSortVal]
 			]
 		},
 		limit,
@@ -378,10 +378,10 @@ router.get("/tags/:tags", asyncHandler(async (req, res, next) => {
 		},
 		{
 			sort: [
+				["createdAt", dateSortVal],
 				["importDate", dateSortVal],
 				["importIndex", dateSortVal],
-				["date", dateSortVal],
-				["createdAt", dateSortVal]
+				["date", dateSortVal]
 			]
 		},
 		limit,
@@ -466,10 +466,10 @@ router.get("/speaker/:speaker", asyncHandler(async (req, res, next) => {
 		},
 		{
 			sort: [
+				["createdAt", dateSortVal],
 				["importDate", dateSortVal],
 				["importIndex", dateSortVal],
-				["date", dateSortVal],
-				["createdAt", dateSortVal]
+				["date", dateSortVal]
 			]
 		},
 		limit,
@@ -557,10 +557,10 @@ router.get("/speaker/:speaker/tags/:tags", asyncHandler(async (req, res, next) =
 		},
 		{
 			sort: [
+				["createdAt", dateSortVal],
 				["importDate", dateSortVal],
 				["importIndex", dateSortVal],
-				["date", dateSortVal],
-				["createdAt", dateSortVal]
+				["date", dateSortVal]
 			]
 		},
 		limit,
@@ -731,10 +731,10 @@ router.get("/search", asyncHandler(async (req, res, next) => {
 		},
 		{
 			sort: [
+				["createdAt", dateSortVal],
 				["importDate", dateSortVal],
 				["importIndex", dateSortVal],
-				["date", dateSortVal],
-				["createdAt", dateSortVal]
+				["date", dateSortVal]
 			]
 		},
 		limit,

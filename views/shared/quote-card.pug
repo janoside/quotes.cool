@@ -63,16 +63,20 @@
 
 		.clearfix
 			.float-end
-				if (quote.date)
+				- var date = quote.date;
+				if (!date)
+					- date = quote.createdAt;
+
+				if (date)
 					i.far.fa-clock.me-1
-					| #{utils.formatDate(quote.date, "MMM d, yyyy")}
+					| #{utils.formatDate(date, "MMM d, yyyy")}
 					
 					// TODO implement year pages
 					if (false)
-						a.text-reset.underlined-link(href=`/year/${utils.formatDate(quote.date, "yyyy")}`) #{utils.formatDate(quote.date, "yyyy")}
+						a.text-reset.underlined-link(href=`/year/${utils.formatDate(date, "yyyy")}`) #{utils.formatDate(date, "yyyy")}
 					
-					if (utils.formatDate(quote.date, "HH:mm:ss") != "00:00:00")
-						|  - #{utils.formatDate(quote.date, "h:mma").toLowerCase()}
+					if (utils.formatDate(date, "HH:mm:ss") != "00:00:00")
+						|  - #{utils.formatDate(date, "h:mma").toLowerCase()}
 				
 				if (session.user && quote.userId == session.user._id)
 					div.text-end(class=(quote.date ? "mt-2" : false))
