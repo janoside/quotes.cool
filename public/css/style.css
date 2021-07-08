@@ -34,12 +34,16 @@ h1 {
 	margin-bottom: 0.75rem;
 }
 
+.quote-body em {
+	text-decoration: underline;
+}
+
 .quote-body em::before {
-	content: "\2732";
+	/*content: "\2732";*/
 }
 
 .quote-body em::after {
-	content: "\2732";
+	/*content: "\2732";*/
 }
 
 .blockquote-footer {
