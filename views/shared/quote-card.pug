@@ -1,5 +1,21 @@
 - var quoteUrl = (list ? `/list/${list._id}/${quote._id}` : `/quote/${quote._id}`);
 
+
+- var date = quote.date;
+if (!date)
+	- date = quote.createdAt;
+
+mixin quoteDate
+	div
+		| #{utils.formatDate(date, "MMM d, yyyy")}
+		
+		// TODO implement year pages
+		if (false)
+			a.text-reset.underlined-link(href=`/year/${utils.formatDate(date, "yyyy")}`) #{utils.formatDate(date, "yyyy")}
+		
+		if (utils.formatDate(date, "HH:mm:ss") != "00:00:00")
+			| , #{utils.formatDate(date, "h:mma").toLowerCase()}
+
 mixin quoteLink
 	if (quote.link)
 		small.text-muted.ms-2 (
@@ -126,34 +142,26 @@ mixin quoteAdminDropdown
 								i.fas.fa-user-circle.me-1
 								| #{quoteUsername}
 
+				if (date)
+					.d-block.d-md-none
+						+quoteDate
+
 
 
 			.float-end.d-md-none
 				if (session.user && quote.userId == session.user._id && !quoteListPage)
-					div.text-end(class=(quote.date ? "mt-2" : false))
-						+quoteAdminDropdown
+					+quoteAdminDropdown
 				
 				else
 					// no quote-management dropdown
 
 
-			.float-md-end.float-start
-				- var date = quote.date;
-				if (!date)
-					- date = quote.createdAt;
-
+			.float-md-end.d-none.d-md-block
 				if (date)
-					div
-						| #{utils.formatDate(date, "MMM d, yyyy")}
-						
-						// TODO implement year pages
-						if (false)
-							a.text-reset.underlined-link(href=`/year/${utils.formatDate(date, "yyyy")}`) #{utils.formatDate(date, "yyyy")}
-						
-						if (utils.formatDate(date, "HH:mm:ss") != "00:00:00")
-							| , #{utils.formatDate(date, "h:mma").toLowerCase()}
+					+quoteDate
 
 				.d-none.d-md-block.text-end.pt-2
-					+quoteAdminDropdown
+					if (session.user && quote.userId == session.user._id && !quoteListPage)
+						+quoteAdminDropdown
 					
 				
