@@ -33,7 +33,7 @@ mixin quoteAdminDropdown
 			i.fas.fa-cog
 		.dropdown-menu.dropdown-menu-end
 			a.dropdown-item(href=`javascript:void(0);` onclick=`copyTextToClipboard(baseUrl + 'share/${quote._id}')`)
-				i.far.fa-clipboard.me-2
+				i.far.fa-copy.me-2
 				| Copy shareable link
 			a.dropdown-item(href=`/quote/${quote._id}/edit`)
 				i.far.fa-edit.me-2
@@ -47,6 +47,9 @@ mixin quoteAdminDropdown
 
 .card.shadow-sm.mb-3
 	.card-body
+		.float-end
+			+copyTextButton(`${baseUrl}share/${quote._id}`, "Copy shareable link")
+
 		.quote-body
 			if (quote.text)
 				div
