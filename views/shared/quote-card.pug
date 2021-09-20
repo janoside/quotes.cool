@@ -30,19 +30,19 @@ mixin quoteLink
 mixin quoteAdminDropdown
 	.dropdown
 		button.btn.btn-light.border.shadow-sm.py-0.btn-sm.dropdown-toggle(type="button", data-bs-toggle="dropdown", aria-haspopup="true", aria-expanded="false")
-			i.fas.fa-cog
+			i.bi-gear
 		.dropdown-menu.dropdown-menu-end
 			a.dropdown-item(href=`javascript:void(0);` onclick=`copyTextToClipboard(baseUrl + 'share/${quote._id}')`)
-				i.far.fa-copy.me-2
+				i.bi-clipboard-plus.me-2
 				| Copy shareable link
 			a.dropdown-item(href=`/quote/${quote._id}/edit`)
-				i.far.fa-edit.me-2
+				i.bi-pencil.me-2
 				| Edit this quote
 			a.dropdown-item(href=`/quote/${quote._id}/raw`, target="_blank")
-				i.fas.fa-info-circle.me-2
+				i.bi-info-circle.me-2
 				| View raw data
 			a.dropdown-item.text-danger(href=`/quote/${quote._id}/delete`)
-				i.far.fa-trash-alt.me-2
+				i.bi-trash-alt.me-2
 				| Delete this quote
 
 .card.shadow-sm.mb-3
@@ -124,11 +124,11 @@ mixin quoteAdminDropdown
 						each tag, tagIndex in quote.tags
 							if (noTagLinks)
 								span.badge.bg-primary.me-1
-									i.fas.fa-tag.me-1
+									i.bi-tag.me-1
 									| #{tag}
 							else
 								a.badge.bg-primary.me-1(href=`/tags/${tag}`)
-									i.fas.fa-tag.me-1
+									i.bi-tag.me-1
 									| #{tag}
 
 
@@ -137,12 +137,12 @@ mixin quoteAdminDropdown
 						- var quoteUsername = quote.username;
 						if (noUserLinks)
 							span.badge.bg-info
-								i.fas.fa-user-circle.me-1
+								i.bi-person-circle.me-1
 								| #{quoteUsername}
 
 						else
 							a.badge.bg-info(href=`/${quoteUsername}/quotes`)
-								i.fas.fa-user-circle.me-1
+								i.bi-person-circle.me-1
 								| #{quoteUsername}
 
 				if (date)

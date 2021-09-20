@@ -9,12 +9,12 @@ block content
 			| #{quoteCount != 1 ? "s" : ""}
 			|  from 
 			a.badge.bg-primary.me-1(href=`./speaker/${speaker}`)
-					i.fas.fa-child.me-2
+					i.bi-person-fill.me-2
 					| #{speaker}
 			|  tagged 
 			each tag in tags
 				span.badge.bg-primary.me-1
-					i.fas.fa-tag.me-2
+					i.bi-tag.me-2
 					| #{tag}
 	
 
