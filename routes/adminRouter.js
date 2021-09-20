@@ -1,9 +1,14 @@
-var express = require("express");
-var router = express.Router();
-var app = require("../app/app.js");
-var db = require("../app/db.js");
-var debugLog = require("debug")("app:rootRouter");
+const express = require("express");
+const debugLog = require("debug")("app:rootRouter");
 const asyncHandler = require("express-async-handler");
+
+const router = express.Router();
+
+const app = require("../app/app.js");
+
+const appUtils = require("@janoside/app-utils");
+const utils = appUtils.utils;
+
 
 router.get("*", asyncHandler(async (req, res, next) => {
 	var loginNeeded = false;
@@ -44,7 +49,7 @@ router.get("/users", asyncHandler(async (req, res, next) => {
 	var userCollection = await db.getCollection("users");
 	res.locals.userCount = await userCollection.countDocuments();
 	
-	var users = await db.findObjects("users", {}, {limit:res.locals.limit, skip:res.locals.offset});
+	var users = await db.findMany("users", {}, {limit:res.locals.limit, skip:res.locals.offset});
 
 	res.locals.users = users;
 
@@ -57,7 +62,7 @@ router.get("/users", asyncHandler(async (req, res, next) => {
 router.get("/user/:username", asyncHandler(async (req, res, next) => {
 	var username = req.params.username;
 	
-	var user = await db.findObject("users", {username:username});
+	var user = await db.findOne("users", {username:username});
 
 	res.locals.user = user;
 
@@ -67,7 +72,7 @@ router.get("/user/:username", asyncHandler(async (req, res, next) => {
 router.get("/user/:username/delete", asyncHandler(async (req, res, next) => {
 	var username = req.params.username;
 
-	await db.deleteObject("users", {username:username});
+	await db.deleteOne("users", {username:username});
 
 	req.session.userMessage = `Deleted user '${username}'`;
 	req.session.userMessageType = "success";

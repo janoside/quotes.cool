@@ -1,16 +1,18 @@
-const MongoClient = require("mongodb").MongoClient;
-const appConfig = require("./config.js");
 const debug = require("debug");
 const crypto = require("crypto");
-const passwordUtils = require("./util/password.js");
-const utils = require("./util/utils.js");
 const { DateTime } = require("luxon");
 
-var debugLog = debug("app:main");
-var db = require("./db.js");
+const appConfig = require("./config.js");
+
+const appUtils = require("@janoside/app-utils");
+const utils = appUtils.utils;
+const passwordUtils = appUtils.passwordUtils;
+
+const debugLog = debug("app:main");
+
 
 async function authenticate(username, password, passwordPreHashed=false) {
-	var user = await db.findObject("users", {username:username});
+	var user = await db.findOne("users", {username:username});
 
 	if (user == null) {
 		debugLog(`User authentication failed: ${username} doesn't exist`);
@@ -64,7 +66,7 @@ async function importQuotesFromText(importName, importText, public, user) {
 		quotes.push(quote);
 	});
 
-	await db.insertObjects("quotes", quotes);
+	await db.insertMany("quotes", quotes);
 
 	return {
 		quotes: quotes,

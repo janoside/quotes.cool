@@ -1,14 +1,19 @@
+const debug = require("debug");
 const express = require("express");
-const router = express.Router();
-const app = require("../app/app.js");
-const utils = require("../app/util/utils.js");
-const debugLog = require("debug")("app:rootRouter");
 const asyncHandler = require("express-async-handler");
-const passwordUtils = require("../app/util/password.js");
+
+const ObjectId = require("mongodb").ObjectId;
+const router = express.Router();
+
+const debugLog = debug("app:rootRouter");
+
+const app = require("../app/app.js");
 const appConfig = require("../app/config.js");
-const db = require("../app/db.js");
-const { ObjectID } = require("mongodb");
-const MongoObjectID = require("mongodb").ObjectID;
+
+const appUtils = require("@janoside/app-utils");
+const utils = appUtils.utils;
+const passwordUtils = appUtils.passwordUtils;
+
 
 router.get("/", asyncHandler(async (req, res, next) => {
 	if (req.session.user) {
@@ -30,7 +35,7 @@ router.get("/", asyncHandler(async (req, res, next) => {
 			{ $sort: { count: -1, _id: 1 }}
 		]).toArray();
 
-		const lists = await db.findObjects("quoteLists", { userId: req.session.user._id.toString() });
+		const lists = await db.findMany("quoteLists", { userId: req.session.user._id.toString() });
 
 		res.locals.tagCount = tagsData.length;
 		res.locals.speakerCount = speakersData.length;
@@ -48,7 +53,7 @@ router.post("/signup", asyncHandler(async (req, res, next) => {
 	const username = req.body.username;
 	const passwordHash = await passwordUtils.hash(req.body.password);
 
-	const existingUser = await db.findObject("users", {username:username});
+	const existingUser = await db.findOne("users", {username:username});
 	if (existingUser) {
 		debugLog("Username already exists");
 
@@ -65,7 +70,7 @@ router.post("/signup", asyncHandler(async (req, res, next) => {
 		passwordHash: passwordHash
 	};
 
-	const insertedUser = await db.insertObject("users", user);
+	const insertedUser = await db.insertOne("users", user);
 
 	req.session.username = username;
 	req.session.user = insertedUser;
@@ -151,7 +156,7 @@ router.get("/account", asyncHandler(async (req, res, next) => {
 		}
 	]).toArray();
 
-	const lists = await db.findObjects("quoteLists", { userId: req.session.user._id.toString() });
+	const lists = await db.findMany("quoteLists", { userId: req.session.user._id.toString() });
 
 	res.locals.lists = lists;
 	res.locals.importData = importData;
@@ -167,12 +172,12 @@ router.post("/new-quote", asyncHandler(async (req, res, next) => {
 	const content = req.body.text;
 
 	const quote = app.quoteFromTextRepresentation(content, req.session.user);
-	const savedQuote = await db.insertObject("quotes", quote);
+	const savedQuoteId = await db.insertOne("quotes", quote);
 
 	req.session.userMessage = "Saved!";
 	req.session.userMessageType = "success";
 
-	res.redirect(`/quote/${savedQuote._id.toString()}`);
+	res.redirect(`/quote/${savedQuoteId}`);
 }));
 
 router.get("/quote/:quoteId", asyncHandler(async (req, res, next) => {
@@ -183,7 +188,7 @@ router.get("/quote/:quoteId", asyncHandler(async (req, res, next) => {
 	}
 
 	const quoteId = req.params.quoteId;
-	const quote = await db.findObject("quotes", {_id:ObjectID(quoteId)});
+	const quote = await db.findOne("quotes", {_id:ObjectId(quoteId)});
 
 	if (req.session.username != quote.username) {
 		res.redirect("/");
@@ -199,7 +204,7 @@ router.get("/quote/:quoteId", asyncHandler(async (req, res, next) => {
 // publicly shareable link for a single quote
 router.get("/share/:quoteId", asyncHandler(async (req, res, next) => {
 	const quoteId = req.params.quoteId;
-	const quote = await db.findObject("quotes", {_id:ObjectID(quoteId)});
+	const quote = await db.findOne("quotes", {_id:ObjectId(quoteId)});
 
 	res.locals.quote = quote;
 
@@ -212,7 +217,7 @@ router.get("/share/:quoteId", asyncHandler(async (req, res, next) => {
 
 router.get("/quote/:quoteId/edit", asyncHandler(async (req, res, next) => {
 	const quoteId = req.params.quoteId;
-	const quote = await db.findObject("quotes", {_id:ObjectID(quoteId)});
+	const quote = await db.findOne("quotes", {_id:ObjectId(quoteId)});
 
 	res.locals.quote = quote;
 	res.locals.quoteTextRepresentation = app.quoteToTextRepresentation(quote);
@@ -222,7 +227,7 @@ router.get("/quote/:quoteId/edit", asyncHandler(async (req, res, next) => {
 
 router.get("/quote/:quoteId/raw", asyncHandler(async (req, res, next) => {
 	const quoteId = req.params.quoteId;
-	const quote = await db.findObject("quotes", {_id:ObjectID(quoteId)});
+	const quote = await db.findOne("quotes", {_id:ObjectId(quoteId)});
 
 	res.locals.quote = quote;
 
@@ -232,7 +237,7 @@ router.get("/quote/:quoteId/raw", asyncHandler(async (req, res, next) => {
 router.post("/quote/:quoteId/edit", asyncHandler(async (req, res, next) => {
 	const quoteId = req.params.quoteId;
 	const updatedQuote = app.quoteFromTextRepresentation(req.body.content, req.session.user);
-	const existingQuote = await db.findObject("quotes", {_id:ObjectID(quoteId)});
+	const existingQuote = await db.findOne("quotes", {_id:ObjectId(quoteId)});
 
 	debugLog("updatedQuote: " + JSON.stringify(updatedQuote));
 
@@ -242,7 +247,7 @@ router.post("/quote/:quoteId/edit", asyncHandler(async (req, res, next) => {
 	}
 
 	const quotesCollection = await db.getCollection("quotes");
-	const updateResult = await quotesCollection.updateOne({_id:ObjectID(quoteId)}, {$set: updatedQuote});
+	const updateResult = await quotesCollection.updateOne({_id:ObjectId(quoteId)}, {$set: updatedQuote});
 
 	req.session.userMessage = updateResult.result.ok == 1 ? "Quote saved." : ("Status unknown: " + JSON.stringify(updateResult));
 	req.session.userMessageType = "success";
@@ -252,7 +257,7 @@ router.post("/quote/:quoteId/edit", asyncHandler(async (req, res, next) => {
 
 router.get("/quote/:quoteId/delete", asyncHandler(async (req, res, next) => {
 	const quoteId = req.params.quoteId;
-	const quote = await db.findObject("quotes", {_id:ObjectID(quoteId)});
+	const quote = await db.findOne("quotes", {_id:ObjectId(quoteId)});
 
 	res.locals.quote = quote;
 
@@ -261,9 +266,9 @@ router.get("/quote/:quoteId/delete", asyncHandler(async (req, res, next) => {
 
 router.post("/quote/:quoteId/delete", asyncHandler(async (req, res, next) => {
 	const quoteId = req.params.quoteId;
-	const quote = await db.findObject("quotes", {_id:ObjectID(quoteId)});
+	const quote = await db.findOne("quotes", {_id:ObjectId(quoteId)});
 
-	const result = await db.deleteObject("quotes", {_id:quote._id});
+	const result = await db.deleteOne("quotes", {_id:quote._id});
 
 	debugLog("deleteResult: " + JSON.stringify(result));
 	
@@ -303,9 +308,9 @@ router.get("/:username/quotes", asyncHandler(async (req, res, next) => {
 
 	const quoteCount = await quotesCollection.countDocuments({userId: req.session.user._id.toString()});
 
-	const user = await db.findObject("users", {username: username});
+	const user = await db.findOne("users", {username: username});
 
-	const quotes = await db.findObjects(
+	const quotes = await db.findMany(
 		"quotes",
 		{ userId: user._id.toString() },
 		{
@@ -363,7 +368,7 @@ router.get("/tags/:tags", asyncHandler(async (req, res, next) => {
 
 	const dateSortVal = sort.startsWith("date-") ? (sort.endsWith("-desc") ? -1 : 1) : -1;
 
-	const quotes = await db.findObjects(
+	const quotes = await db.findMany(
 		"quotes",
 		{
 			$and: [
@@ -451,7 +456,7 @@ router.get("/speaker/:speaker", asyncHandler(async (req, res, next) => {
 
 	const dateSortVal = sort.startsWith("date-") ? (sort.endsWith("-desc") ? -1 : 1) : -1;
 
-	const quotes = await db.findObjects(
+	const quotes = await db.findMany(
 		"quotes",
 		{
 			$and: [
@@ -541,7 +546,7 @@ router.get("/speaker/:speaker/tags/:tags", asyncHandler(async (req, res, next) =
 
 	const tags = req.params.tags.split(",").map(x => x.trim().toLowerCase());
 
-	const quotes = await db.findObjects(
+	const quotes = await db.findMany(
 		"quotes",
 		{
 			$and: [
@@ -627,7 +632,7 @@ router.post("/import", asyncHandler(async (req, res, next) => {
 
 router.get("/import/:importId", asyncHandler(async (req, res, next) => {
 	const importId = req.params.importId;
-	const quotes = await db.findObjects("quotes", {importId:importId}, {sort:[["importIndex", 1]]});
+	const quotes = await db.findMany("quotes", {importId:importId}, {sort:[["importIndex", 1]]});
 	const quotesCollection = await db.getCollection("quotes");
 	const uniqueSpeakers = await quotesCollection.distinct("speakers", {importId:importId});
 	
@@ -640,7 +645,7 @@ router.get("/import/:importId", asyncHandler(async (req, res, next) => {
 
 router.get("/import/:importId/delete", asyncHandler(async (req, res, next) => {
 	const importId = req.params.importId;
-	const quotes = await db.findObjects("quotes", {importId:importId});
+	const quotes = await db.findMany("quotes", {importId:importId});
 	const quotesCollection = await db.getCollection("quotes");
 	const uniqueSpeakers = await quotesCollection.distinct("speakers", {importId:importId});
 	
@@ -654,7 +659,7 @@ router.get("/import/:importId/delete", asyncHandler(async (req, res, next) => {
 
 router.get("/import/:importId/export", asyncHandler(async (req, res, next) => {
 	const importId = req.params.importId;
-	const quotes = await db.findObjects("quotes", {importId:importId});
+	const quotes = await db.findMany("quotes", {importId:importId});
 
 	var exportContent = "";
 	quotes.forEach((quote) => {
@@ -708,7 +713,7 @@ router.get("/search", asyncHandler(async (req, res, next) => {
 
 	const regex = new RegExp(query, "i");
 	
-	const quotes = await db.findObjects(
+	const quotes = await db.findMany(
 		"quotes",
 		{
 			$and: [
@@ -877,7 +882,7 @@ router.post("/new-list", asyncHandler(async (req, res, next) => {
 
 router.get("/list/:listId", asyncHandler(async (req, res, next) => {
 	const listId = req.params.listId;
-	const list = await db.findObject("quoteLists", {_id:new ObjectID(listId)});
+	const list = await db.findOne("quoteLists", {_id:new ObjectId(listId)});
 
 	const queryAnds = [];
 	
@@ -922,7 +927,7 @@ router.get("/list/:listId", asyncHandler(async (req, res, next) => {
 
 	debugLog(`List: ${JSON.stringify(list)}, Query: ${JSON.stringify(queryAnds)}`);
 
-	const quotes = await db.findObjects("quotes", {
+	const quotes = await db.findMany("quotes", {
 		$and: queryAnds
 	});
 	
@@ -936,8 +941,8 @@ router.get("/list/:listId", asyncHandler(async (req, res, next) => {
 }));
 
 router.get("/list/:listId/:quoteId", asyncHandler(async (req, res, next) => {
-	const list = await db.findObject("quoteLists", {_id:ObjectID(req.params.listId)});
-	const quote = await db.findObject("quotes", {_id:ObjectID(req.params.quoteId)});
+	const list = await db.findOne("quoteLists", {_id:ObjectId(req.params.listId)});
+	const quote = await db.findOne("quotes", {_id:ObjectId(req.params.quoteId)});
 
 	res.locals.list = list;
 	res.locals.quote = quote;
@@ -967,7 +972,7 @@ router.get("/changeSetting", asyncHandler(async (req, res, next) => {
 
 // export all quotes for current user
 router.get("/export", asyncHandler(async (req, res, next) => {
-	const quotes = await db.findObjects(
+	const quotes = await db.findMany(
 		"quotes",
 		{
 			userId:req.session.user._id.toString()
