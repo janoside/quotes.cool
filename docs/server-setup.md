@@ -27,12 +27,15 @@
 	  # configure admin user and enable authentication
 	  # ref: https://www.digitalocean.com/community/tutorials/how-to-secure-mongodb-on-ubuntu-20-04
 	  # ref2 (for 4 superuser roles): https://stackoverflow.com/questions/22638258/create-superuser-in-mongo
-	  mongo   # launches mongo shell
+	  mongosh   # launches mongo shell
 	  
-	  mongo > use admin
-	  mongo > db.createUser({user: "admin", pwd: passwordPrompt(), roles: [{ role: "userAdminAnyDatabase", db: "admin" }, { role: "readWriteAnyDatabase", db: "admin" }, { role: "dbAdminAnyDatabase", db: "admin" }, { role: "clusterAdmin", db: "admin" }]})
-	  mongo > db.createUser({user: "backups", pwd: passwordPrompt(), roles: [{ role: "readAnyDatabase", db: "admin" }]})
-	  mongo > exit
+	  mongosh >
+	  {
+	  use admin
+	  db.createUser({user: "admin", pwd: passwordPrompt(), roles: [{ role: "userAdminAnyDatabase", db: "admin" }, { role: "readWriteAnyDatabase", db: "admin" }, { role: "dbAdminAnyDatabase", db: "admin" }, { role: "clusterAdmin", db: "admin" }]})
+	  db.createUser({user: "backups", pwd: passwordPrompt(), roles: [{ role: "readAnyDatabase", db: "admin" }]})
+	  exit
+	  }
 	  
 	  vim /etc/mongod.conf
 	  # uncomment the `security:` prompt
@@ -40,12 +43,12 @@
 	  service mongod restart
 	  
 	  # verify authentication is enabled
-	  mongo   # launches mongo shell
+	  mongosh   # launches mongo shell
 	  
-	  mongo > show databases; # should return no results since default mongo user has no permissions
-	  mongo > exit
+	  mongosh > show databases; # should return no results since default mongo user has no permissions
+	  mongosh > exit
 	  
-	  mongo -u admin -p
+	  mongosh -u admin -p
 	  
 	  # install pm2
 	  npm install -g pm2
