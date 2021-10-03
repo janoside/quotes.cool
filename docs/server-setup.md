@@ -7,16 +7,19 @@
 	  apt update
 	  apt upgrade
 	  
+	  # install NodeVersionManager (nvm)
+	  curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.38.0/install.sh | bash
+	  
 	  # install misc tools
 	  apt install net-tools iotop ncdu unzip
 	  
 	  # install npm, nginx, certbot
-	  apt install npm nginx certbot python3-certbot-nginx
+	  apt install nginx python3-certbot-nginx
 	  
 	  # install mongodb
 	  # ref: https://docs.mongodb.com/manual/tutorial/install-mongodb-on-ubuntu/
-	  wget -qO - https://www.mongodb.org/static/pgp/server-4.4.asc | sudo apt-key add -
-	  echo "deb [ arch=amd64,arm64 ] https://repo.mongodb.org/apt/ubuntu focal/mongodb-org/4.4 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-4.4.list
+	  wget -qO - https://www.mongodb.org/static/pgp/server-5.0.asc | sudo apt-key add -
+	  echo "deb [ arch=amd64,arm64 ] https://repo.mongodb.org/apt/ubuntu focal/mongodb-org/5.0 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-5.0.list
 	  apt update
 	  apt-get install -y mongodb-org
 	  systemctl start mongod
