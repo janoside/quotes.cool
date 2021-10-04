@@ -1,7 +1,5 @@
 # Server Setup
 
-(Using digital ocean)
-
 * Start with Ubuntu 20.04 image
 
 	  apt update
@@ -15,6 +13,9 @@
 	  
 	  # install npm, nginx, certbot
 	  apt install nginx python3-certbot-nginx
+	  
+	  # set hostname
+	  hostnamectl set-hostname XXX_HOSTNAME
 	  
 	  # install mongodb
 	  # ref: https://docs.mongodb.com/manual/tutorial/install-mongodb-on-ubuntu/
@@ -57,7 +58,7 @@
 	  
 	  # upload ~/.ssh/id_rsa.pub to github
 	  
-	  git clone git@github.com:janoside/quotes.cool.git
+	  git clone https://github.com/janoside/quotes.cool
 	  cd quotes.cool
 	  npm i
 	  pm2 start bin/main.js --name quotes
@@ -91,12 +92,3 @@
 	  # add line like below (run every 3 hrs, 17-min after the hour)
 	  # 17 */3 * * * /root/backup.sh > /root/backup.log 2>&1
 
-
-### Cleanup
-
-* Uninstall mongodb
-
-      service mongod stop
-	  apt-get purge mongodb-org*
-	  rm -r /var/log/mongodb
-	  rm -r /var/lib/mongodb
