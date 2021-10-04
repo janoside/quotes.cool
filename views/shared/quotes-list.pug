@@ -19,7 +19,6 @@
 						- hiddenTagCount++;
 
 					.tag-item(class=(itemIndex > maxVisibleTagCount ? "d-none" : "d-lg-block d-inline"))
-						| #{itemIndex}
 						a.btn.btn-primary.btn-sm.mb-2(href=`${speaker ? ("/speaker/" + speaker) : ""}/tags/${item._id}`)
 							small
 								i.bi-tag-fill.me-2
