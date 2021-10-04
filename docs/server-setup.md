@@ -102,5 +102,5 @@ Configure Backups
 	crontab -e
 	# configuration helper: https://crontab.guru/
 	# add line like below (run every 3 hrs, 17-min after the hour)
-	# 17 */3 * * * /root/backup.sh > /root/backup.log 2>&1
+	# 5 0,12 * * * /root/quotes.cool/backup.sh > /root/quotes.cool/backup.log 2>&1
 
