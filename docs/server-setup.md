@@ -96,7 +96,8 @@ Configure Backups
 	aws configure # enter AWS credentials
 	
 	wget "https://raw.githubusercontent.com/janoside/quotes.cool/master/docs/backup.sh"
-	# edit backup.sh - enter credentials for "backups" db user
+	# edit backup.sh:
+	# enter mongodb "backups" user password and AWS profile name (from ~/.aws/credentials file)
 	
 	crontab -e
 	# configuration helper: https://crontab.guru/
