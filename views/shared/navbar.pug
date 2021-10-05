@@ -1,6 +1,9 @@
 nav.navbar.navbar-expand-md.navbar-dark.bg-header-footer
 	.container
-		a.navbar-brand(href="/") #{global.appConfig.siteName}
+		a.navbar-brand(href="/")
+			img.shadow.rounded.border.border-dark.me-2.mt-n2.mb-n1(src="/img/icon/favicon-32x32.png" srcset="/img/icon/favicon-32x32.png 1x, /img/icon/apple-touch-icon.png 2x" alt="logo" style="width: 30px; height: 30px;")
+			span.d-none.d-lg-inline #{global.appConfig.siteName}
+
 		button.navbar-toggler(type="button", data-bs-toggle="collapse", data-bs-target="#navbarNav", aria-controls="navbarNav")
 			span.navbar-toggler-icon
 		
@@ -28,7 +31,7 @@ nav.navbar.navbar-expand-md.navbar-dark.bg-header-footer
 								i.bi-sun
 					li.nav-item.dropdown
 						a#navbarDropdown.nav-link.dropdown-toggle(href="javascript:void(0)", role="button", data-bs-toggle="dropdown", aria-haspopup="true", aria-expanded="false") #{session.username}
-						.dropdown-menu.dropdown-menu-right(aria-labelledby="navbarDropdown")
+						.dropdown-menu.dropdown-menu-end(aria-labelledby="navbarDropdown")
 							a.dropdown-item(href="/account")
 								i.bi-person-circle.me-2
 								| My Account
