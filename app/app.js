@@ -144,7 +144,7 @@ function quoteFromTextRepresentation(importChunk, user) {
 
 			quote.visibility = line;
 
-		} else if (line.trim().startsWith("url:")) {
+		} else if (line.trim().toLowerCase().startsWith("url:")) {
 			// link
 
 			// trim and move past "url:"
