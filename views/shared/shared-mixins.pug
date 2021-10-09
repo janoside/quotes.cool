@@ -92,39 +92,40 @@ mixin summaryItem(title, titleDesc, subtitle, subtitleDesc)
 
 
 mixin quoteListPageHeader(quoteCount, limit, offset, sort, paginationBaseUrl)
-	.clearfix
-		.float-none.float-md-start.mt-n2.mt-md-0
-			.text-center
-				block
+	.d-md-flex.justify-content-between
+		.text-center
+			block
 
-		.float-none.float-md-end
-			.clearfix
-				.float-none.float-md-end.mb-2.mb-md-0
-					if (quoteCount > limit)
-						+pagination(limit, offset, sort, quoteCount, paginationBaseUrl, "center")
+		.d-md-flex.align-items-end.mb-2
+			if (quoteCount > limit)
+				+pagination(limit, offset, sort, quoteCount, paginationBaseUrl, "center")
 
-				.float-none.float-md-end
-					nav.me-2
-						ul.pagination.justify-content-center.justify-content-md-start
-							if (sort == "date-desc")
-								li.page-item.disabled
-									a.page-link.text-body(href="", aria-disabled="true")
-										i.bi-check.me-2
-										span New First
-										
-							else
-								li.page-item
-									a.page-link(href=`${paginationBaseUrl}?sort=date-desc`, type="button") New First
+			nav.ms-md-2.mt-2.mt-md-0
+				ul.pagination.mb-0.flex-wrap.justify-content-center.justify-content-md-start
+					if (sort == "date-desc")
+						li.page-item.disabled
+							a.page-link.text-body(href="", aria-disabled="true")
+								i.bi-check.me-2
+								span New
+								i.bi-arrow-up.ms-1
+								
+					else
+						li.page-item
+							a.page-link(href=`${paginationBaseUrl}?sort=date-desc`, type="button") New
+								i.bi-arrow-up.ms-1
 
-							if (sort == "date-asc")
-								li.page-item.disabled
-									a.page-link.text-body(href="#", aria-disabled="true")
-										i.bi-check.me-1
-										span Old First
-										
-							else
-								li.page-item
-									a.page-link(href=`${paginationBaseUrl}?sort=date-asc`, type="button") Old First
+					if (sort == "date-asc")
+						li.page-item.disabled
+							a.page-link.text-body(href="#", aria-disabled="true")
+								i.bi-check.me-1
+								span Old
+								i.bi-arrow-up.ms-1
+								
+					else
+						li.page-item
+							a.page-link(href=`${paginationBaseUrl}?sort=date-asc`, type="button") Old
+								i.bi-arrow-up.ms-1
+						
 
 
 mixin timestamp(timestamp, includeAgo=true, formatString)
