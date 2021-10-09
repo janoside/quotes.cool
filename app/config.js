@@ -7,7 +7,7 @@ global.appConfig = {
 	siteDomain: process.env.SITE_DOMAIN || "localhost",
 	serverPort: process.env.PORT || 3000,
 	baseUrl: process.env.SITE_BASE_URL,
-	siteName: process.env.SITE_NAME || "UnknownSite",
+	siteName: process.env.SITE_NAME || "Quotes.cool",
 	secureSite: process.env.SECURE_SITE == "true",
 	cookiePassword: process.env.COOKIE_PASSWORD || "c-is-for-cookie",
 

@@ -1,4 +1,5 @@
 const fs = require('fs');
+const debug = require("debug");
 const createError = require("http-errors");
 const express = require("express");
 const path = require("path");
@@ -14,7 +15,7 @@ const app = require("./app/app.js");
 const appUtils = require("@janoside/app-utils");
 const utils = appUtils.utils;
 
-const debugLog = require("debug")("app:app");
+const debugLog = debug("app:app");
 
 const package_json = require('./package.json');
 global.appVersion = package_json.version;
