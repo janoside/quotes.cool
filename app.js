@@ -39,7 +39,11 @@ expressApp.onStartup = function() {
 	global.nodeVersion = process.version;
 
 	(async () => {
-		let db = await dbSetup.connect();
+		try {
+			let db = await dbSetup.connect();
+		} catch (err) {
+			utils.logError("db-connection-failure", err);
+		}
 	})();
 
 	if (global.sourcecodeVersion == null && fs.existsSync('.git')) {
