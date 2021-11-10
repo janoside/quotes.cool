@@ -69,6 +69,27 @@ router.get("/user/:username", asyncHandler(async (req, res, next) => {
 	res.render("admin/user");
 }));
 
+router.get("/user/:username/add-role/:role", asyncHandler(async (req, res, next) => {
+	const username = req.params.username;
+	const role = req.params.role;
+
+	const user = await db.findOne("users", {username:username});
+
+	if (!user.roles) {
+		user.roles = [];
+	}
+
+	user.roles.push(role);
+
+	const usersCollection = await db.getCollection("users");
+	const updateResult = await usersCollection.updateOne({_id:user._id}, {$set: user});
+
+	req.session.userMessage = `Modified '${username}'`;
+	req.session.userMessageType = "success";
+
+	res.redirect(`/admin/user/${username}`);
+}));
+
 router.get("/user/:username/delete", asyncHandler(async (req, res, next) => {
 	var username = req.params.username;
 
