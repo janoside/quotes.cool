@@ -8,14 +8,6 @@ block content
 		h1 Home
 		hr
 
-		.d-block.d-md-none.mb-3
-			form(method="get", action="/search")
-				div.input-group.input-group-block
-					input.form-control.form-control-block(type="text", name="query", placeholder="search...", value=(query))
-					
-					button.btn.btn-primary(type="submit")
-						i.bi-search
-
 		.card.mb-2
 			.card-body
 				- var buttons = [[`/${session.username}/quotes`, "My Quotes", "bi-list", quoteCount], ["/tags", "My Tags", "bi-tag-fill", tagCount], ["/speakers", "People", "bi-people-fill", speakerCount]];
@@ -53,7 +45,7 @@ block content
 				h5 Tools
 				hr
 
-				- var buttons = [["/new-quote", "New Quote", "bi-plus-circle", "Add a new quote"], ["/new-list", "New List", "bi-list", "Create a new shareable list"], ["/import", "Import Quotes", "bi-box-arrow-in-up", "Upload a list of new quotes"]];
+				- var buttons = [["/new-list", "New List", "bi-list", "Create a new shareable list"], ["/import", "Import Quotes", "bi-box-arrow-in-up", "Upload a list of new quotes"]];
 
 				.d-none.d-md-block
 					each item in buttons

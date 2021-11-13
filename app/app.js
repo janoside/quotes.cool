@@ -1,6 +1,7 @@
 const debug = require("debug");
 const crypto = require("crypto");
 const { DateTime } = require("luxon");
+const ObjectId = require("mongodb").ObjectId;
 
 const appConfig = require("./config.js");
 
@@ -298,11 +299,13 @@ async function createList(user, name, tagsAnd, tagsOr, excludedTagsOr, speakersA
 		date: DateTime.utc()
 	};
 
-	return await db.insertObject("quoteLists", quoteList);
+	let listId = await db.insertOne("quoteLists", quoteList);
+
+	return await db.findOne("quoteLists", {_id:ObjectId(listId)});
 }
 
 async function addQuote(user, quote) {
-	db.insertObjects("quotes", [quote]);
+	db.insertMany("quotes", [quote]);
 }
 
 module.exports = {

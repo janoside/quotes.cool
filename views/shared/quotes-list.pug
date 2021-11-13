@@ -1,5 +1,5 @@
 .row
-	if (tagsData)
+	if (tagsData && false)
 		.col-md-0.col-lg-2.d-none.d-lg-block
 			each item in tagsData
 				if (tags.includes(item._id))
@@ -33,7 +33,7 @@
 			if (hiddenTagCount > 0)
 				a(href=`javascript:void(0)`, onclick=`$('.tag-item').removeClass('d-none'); $(this).hide(); return false;`) Show #{hiddenTagCount} hidden
 
-	.col-md-12.col-lg-10
+	.col-md-12.col-lg-12
 		each quote, quoteIndex in quotes
 			.col.p-0.px-lg-2
 				.clearfix

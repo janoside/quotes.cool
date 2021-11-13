@@ -17,29 +17,69 @@ const passwordUtils = appUtils.passwordUtils;
 
 router.get("/", asyncHandler(async (req, res, next) => {
 	if (req.session.user) {
-		var quotesCollection = await db.getCollection("quotes");
+		const username = req.session.user.username;
 
-		res.locals.quoteCount = await quotesCollection.countDocuments({userId:req.session.user._id.toString()});
+		var limit = 25;
+		var offset = 0;
+		var sort = "date-desc";
 
+		if (req.query.limit) {
+			limit = parseInt(req.query.limit);
+		}
+
+		if (req.query.offset) {
+			offset = parseInt(req.query.offset);
+		}
+
+		if (req.query.sort) {
+			sort = req.query.sort;
+		}
+
+		const dateSortVal = sort.startsWith("date-") ? (sort.endsWith("-desc") ? -1 : 1) : -1;
+
+		const quotesCollection = await db.getCollection("quotes");
+
+		const quoteCount = await quotesCollection.countDocuments({userId: req.session.user._id.toString()});
+
+		const user = await db.findOne("users", {username: username});
+
+		const quotes = await db.findMany(
+			"quotes",
+			{ userId: user._id.toString() },
+			{
+				sort: [
+					["createdAt", dateSortVal],
+					["importDate", dateSortVal],
+					["importIndex", dateSortVal],
+					["date", dateSortVal]
+				]
+			},
+			limit,
+			offset);
+
+		
 		const tagsData = await quotesCollection.aggregate([
 			{ $match: { userId: req.session.user._id.toString() } },
 			{ $unwind: "$tags" },
 			{ $group: { _id: "$tags", count: { $sum: 1 } } },
-			{ $sort: { count: -1 }}
-		]).toArray();
-
-		const speakersData = await quotesCollection.aggregate([
-			{ $match: { userId: req.session.user._id.toString() } },
-			{ $unwind: "$speakers" },
-			{ $group: { _id: "$speakers", count: { $sum: 1 } } },
 			{ $sort: { count: -1, _id: 1 }}
 		]).toArray();
 
-		const lists = await db.findMany("quoteLists", { userId: req.session.user._id.toString() });
+		res.locals.username = username;
+		res.locals.user = user;
+		res.locals.quoteCount = quoteCount;
+		res.locals.quotes = quotes;
+		res.locals.tags = [];
+		res.locals.tagsData = tagsData;
 
-		res.locals.tagCount = tagsData.length;
-		res.locals.speakerCount = speakersData.length;
-		res.locals.lists = lists;
+		res.locals.limit = limit;
+		res.locals.offset = offset;
+		res.locals.sort = sort;
+		res.locals.paginationBaseUrl = `./${username}/quotes`;
+
+		res.render("user-quotes");
+
+		return;
 	}
 
 	res.render("index");

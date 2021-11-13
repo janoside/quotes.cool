@@ -27,29 +27,23 @@ mixin quoteLink
 			|)
 
 
-mixin quoteAdminDropdown
-	.dropdown
-		button.btn.btn-light.border.shadow-sm.py-0.btn-sm.dropdown-toggle(type="button", data-bs-toggle="dropdown", aria-haspopup="true", aria-expanded="false")
-			i.bi-gear
-		.dropdown-menu.dropdown-menu-end
-			a.dropdown-item(href=`javascript:void(0);` onclick=`copyTextToClipboard(baseUrl + 'share/${quote._id}')`)
-				i.bi-clipboard-plus.me-2
-				| Copy shareable link
-			a.dropdown-item(href=`/quote/${quote._id}/edit`)
-				i.bi-pencil.me-2
-				| Edit this quote
-			a.dropdown-item(href=`/quote/${quote._id}/raw`, target="_blank")
-				i.bi-info-circle.me-2
-				| View raw data
-			a.dropdown-item.text-danger(href=`/quote/${quote._id}/delete`)
-				i.bi-trash-alt.me-2
-				| Delete this quote
+mixin quoteAdminMenu
+	span.me-5
+		+copyTextButton(`${baseUrl}share/${quote._id}`, "Copy shareable link")
+			i.bi-share.text-info
+
+	a.me-5(href=`/quote/${quote._id}/edit`, title=`Edit this quote`, data-bs-toggle="tooltip")
+		i.bi-pencil-square
+
+	a.me-5(href=`/quote/${quote._id}/raw`, title=`View raw data`, data-bs-toggle="tooltip")
+		i.bi-info-circle
+
+	a(href=`/quote/${quote._id}/delete`, title=`Delete this quote`, data-bs-toggle="tooltip")
+		i.bi-trash.text-danger
+			
 
 .card.shadow-sm.mb-3
 	.card-body
-		.float-end
-			+copyTextButton(`${baseUrl}share/${quote._id}`, "Copy shareable link")
-
 		.quote-body
 			if (quote.text)
 				div
@@ -115,56 +109,42 @@ mixin quoteAdminDropdown
 
 										+quoteLink
 		
-		hr
+		hr.mx-n3
 
-		.clearfix
-			.float-start
-				if (quote.tags)
-					.mb-2
-						each tag, tagIndex in quote.tags
-							if (noTagLinks)
-								span.badge.bg-primary.me-1
-									i.bi-tag-fill.me-1
-									| #{tag}
-							else
-								a.badge.bg-primary.me-1(href=`/tags/${tag}`)
-									i.bi-tag-fill.me-1
-									| #{tag}
+		if (quote.tags)
+			.mb-2
+				each tag, tagIndex in quote.tags
+					if (noTagLinks)
+						span.badge.bg-primary.me-1
+							i.bi-tag-fill.me-1
+							| #{tag}
+					else
+						a.badge.bg-primary.me-1(href=`/tags/${tag}`)
+							i.bi-tag-fill.me-1
+							| #{tag}
 
+		if (quote.username != session.username)
+			.mb-2
+				- var quoteUsername = quote.username;
+				if (noUserLinks)
+					span.badge.bg-info
+						i.bi-person-circle.me-1
+						| #{quoteUsername}
 
-				if (quote.username != session.username)
-					.mb-2
-						- var quoteUsername = quote.username;
-						if (noUserLinks)
-							span.badge.bg-info
-								i.bi-person-circle.me-1
-								| #{quoteUsername}
-
-						else
-							a.badge.bg-info(href=`/${quoteUsername}/quotes`)
-								i.bi-person-circle.me-1
-								| #{quoteUsername}
-
-				if (date)
-					.d-block.d-md-none
-						+quoteDate
-
-
-
-			.float-end.d-md-none
-				if (session.user && quote.userId == session.user._id && !quoteListPage)
-					+quoteAdminDropdown
-				
 				else
-					// no quote-management dropdown
+					a.badge.bg-info(href=`/${quoteUsername}/quotes`)
+						i.bi-person-circle.me-1
+						| #{quoteUsername}
 
 
-			.float-md-end.d-none.d-md-block
-				if (date)
-					+quoteDate
+		if (date)
+			+quoteDate
 
-				.d-none.d-md-block.text-end.pt-2
-					if (session.user && quote.userId == session.user._id && !quoteListPage)
-						+quoteAdminDropdown
-					
+	if (session.user && quote.userId == session.user._id)
+		.card-footer
+			.d-flex.d-lg-none.justify-content-between.fs-4
+				+quoteAdminMenu
+
+			.d-none.d-lg-flex.justify-content-start.fs-6
+				+quoteAdminMenu
 				

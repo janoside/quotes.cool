@@ -150,6 +150,12 @@ expressApp.use(async (req, res, next) => {
 	}
 
 
+	if (req.session.user) {
+		res.locals.quoteLists = await db.findMany("quoteLists", { userId: req.session.user._id.toString() });
+	}
+
+
+
 	res.locals.url = req.url;
 	res.locals.path = req.path;
 
