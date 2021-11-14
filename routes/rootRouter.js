@@ -253,7 +253,7 @@ router.get("/share/:quoteId", asyncHandler(async (req, res, next) => {
 	res.locals.noUserLinks = true;
 	res.locals.noSpeakerLinks = true;
 
-	res.render("quote");
+	res.render("share-quote");
 }));
 
 router.get("/quote/:quoteId/edit", asyncHandler(async (req, res, next) => {

@@ -164,3 +164,7 @@ code {
 	background-color: lighten($card-bg, 15%);
 	color: $body-color;
 }
+
+footer.blockquote-footer {
+	color: $gray-500;
+}
