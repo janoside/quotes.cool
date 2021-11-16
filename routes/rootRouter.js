@@ -290,7 +290,7 @@ router.post("/quote/:quoteId/edit", asyncHandler(async (req, res, next) => {
 	const quotesCollection = await db.getCollection("quotes");
 	const updateResult = await quotesCollection.updateOne({_id:ObjectId(quoteId)}, {$set: updatedQuote});
 
-	req.session.userMessage = updateResult.result.ok == 1 ? "Quote saved." : ("Status unknown: " + JSON.stringify(updateResult));
+	req.session.userMessage = updateResult.modifiedCount == 1 ? "Quote saved." : ("Status unknown: " + JSON.stringify(updateResult));
 	req.session.userMessageType = "success";
 
 	res.redirect(`/quote/${quoteId}`);
