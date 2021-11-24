@@ -5,7 +5,7 @@ block headContent
 
 block content
 
-	.mt-6(style="margin: auto; max-width: 1000px; width: 100%;")
+	.center-col
 		if (list)
 			h5.mb-3
 				a.badge.bg-primary(href=`/list/${list._id}`)
@@ -14,4 +14,4 @@ block content
 				
 				|  &raquo;
 		
-		include shared/quote-card.pug
+		+quoteCard(quote, {listPage:false})

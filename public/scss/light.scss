@@ -16,12 +16,18 @@ $alert-bg-scale: -70%;
 $alert-border-scale: -60%;
 
 
+$input-placeholder-color: darken(#adb5bd, 10%);
 
 
+
+$article-color-base: rgba(0, 0, 0, 0.84);
+$article-color-blockquote: rgba(0, 0, 0, 0.68);
+$article-color-subtitle: rgba(0, 0, 0, 0.54);
+$article-color-selected-text: lavender;
 
 
 @import "./main";
-@import "../../node_modules/bootstrap/scss/bootstrap";
+@import "./article";
 
 
 
@@ -53,4 +59,14 @@ $alert-border-scale: -60%;
 	background-color: darken($card-bg, 3%);
 	border: solid 1px darken($card-bg, 10%) !important;
 	color: $body-color;
+}
+
+.card hr {
+	opacity: 0.125;
+}
+
+
+
+.markdown-body pre {
+	background-color: darken($body-bg, 4%);
 }

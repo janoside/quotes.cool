@@ -1,7 +1,7 @@
 $body-bg: #041f47;
 $body-color: #fafcfc;
 
-$main-bg: darken($body-bg, 8%);
+$main-bg: darken($body-bg, 6%);
 
 $text-muted: #b7bfc7;
 
@@ -66,9 +66,10 @@ $dropdown-header-color: darken($body-color, 25%);
 $dropdown-box-shadow: 0 1.5rem 1rem rgba(#000, .35);
 
 
-$input-bg: darken(#fff, 0%);
-//$input-border-color: lighten($input-bg, 9%);
-$input-color: #212529;
+$input-bg: lighten($main-bg, 4%);
+$input-focus-bg: lighten($input-bg, 3%);
+$input-border-color: lighten($input-bg, 12%);
+$input-placeholder-color: #6c757d;
 
 
 $modal-content-bg: $body-bg;
@@ -76,19 +77,19 @@ $modal-content-color: $body-color;
 
 
 
+$article-color-base: rgba(255, 255, 255, 0.92);
+$article-color-blockquote: rgba(255, 255, 255, 0.68);
+$article-color-subtitle: rgba(255, 255, 255, 0.54);
+$article-color-selected-text: black;
+
+
+
 @import "./main";
+@import "./article";
 @import "../../node_modules/bootstrap/scss/bootstrap";
 
 
 
-
-hr {
-	opacity: 0.15;
-}
-
-.card-footer {
-	background-color: rgba(0, 0, 0, 0.15);
-}
 
 .alert-primary {
 	color: $body-color;
@@ -132,16 +133,19 @@ hr {
 
 
 
+
+
+
 .bg-main {
 	background-color: $main-bg !important;
 }
 
 .bg-header-footer {
-	background-color: #111f33 !important;
+	background-color: #162740 !important;
 }
 
 .bg-header-footer-highlight {
-	background-color: lighten(#162740, 15%) !important;
+	background-color: lighten(#162740, 7%) !important;
 }
 
 .bg-gradient-body-to-main {
@@ -158,6 +162,14 @@ hr {
 	color: $body-color;
 }
 
+.card-footer {
+	background-color: lighten($card-bg, 5%);
+}
+
+.card hr {
+	opacity: 0.125;
+}
+
 code {
 	padding: 0px 30px;
 	border-radius: 3px;
@@ -165,6 +177,11 @@ code {
 	color: $body-color;
 }
 
-footer.blockquote-footer {
-	color: $gray-500;
+
+.markdown-body pre {
+	background-color: lighten($card-bg, 6%);
+}
+
+.markdown-body table th, .markdown-body table td {
+	border: 1px solid lighten($card-bg, 15%);
 }

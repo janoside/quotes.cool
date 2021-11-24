@@ -5,9 +5,8 @@ block headContent
 
 block content
 	h1.mb-3 New Quote
-	hr
-
-	form(method="post", action="/new-quote")
+	
+	form.article(method="post", action="/new-quote")
 		fieldset.mb-4
 			textarea#text.form-control(name="text", rows="10", placeholder="quote")
 

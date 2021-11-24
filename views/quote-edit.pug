@@ -1,10 +1,9 @@
 extends layout
 
 block content
-	h1 Edit
-	hr
+	h1 Edit Quote
 
-	form(method="post", action=`/quote/${quote._id}/edit`)
+	form.article(method="post", action=`/quote/${quote._id}/edit`)
 		fieldset.mb-4
 			textarea#text.form-control(name="content", rows="15") #{quoteTextRepresentation}
 

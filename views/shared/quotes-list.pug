@@ -37,12 +37,11 @@
 		each quote, quoteIndex in quotes
 			.col.p-0.px-lg-2
 				.clearfix
-					.float-start.me-2.mt-2
+					.d-none.d-sm-inline.float-start.me-2.mt-2
 						small.text-muted.font-data.fw-light ##{(offset + quoteIndex + 1).toLocaleString()}
 
 					.d-block
-						- var quoteListPage = true;
-						include ./quote-card.pug
+						+quoteCard(quote, {listPage:true})
 
 		if (quoteCount > limit)
 			hr
