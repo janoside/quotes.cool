@@ -8,21 +8,21 @@
 		"bootstrap-icons": "^1.5.0",
 		"cookie-parser": "^1.4.5",
 		"debug": "^4.3.2",
-		"dotenv": "^10.0.0",
+		"dotenv": "^16.0.0",
 		"express": "^4.17.1",
 		"express-async-handler": "^1.1.4",
 		"express-session": "^1.17.2",
-		"http-errors": "^1.8.0",
-		"@janoside/app-utils": "github:janoside/app-utils#63278c025",
+		"http-errors": "^2.0.0",
+		"@janoside/app-utils": "github:janoside/app-utils#3e4933c8",
 		"luxon": "^2.0.2",
-		"marked": "^3.0.4",
+		"marked": "^4.0.14",
 		"mongodb": "^4.1.3",
 		"morgan": "^1.10.0",
 		"pug": "^3.0.2",
-		"simple-git": "^2.46.0"
+		"simple-git": "^3.7.1"
 	},
 	"devDependencies": {
-		"node-sass": "^6.0.0",
+		"node-sass": "^7.0.1",
 		"npm-run-all": "^4.1.5"
 	},
 	"scripts": {

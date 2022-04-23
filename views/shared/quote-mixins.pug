@@ -63,7 +63,7 @@ mixin quoteBody(quote, options={})
 			div
 				h6.mb-4
 					a.text-reset.text-decoration-none(href=quoteUrl)
-						| !{marked(quote.text.replace(/\n/g, "\n\n"))}
+						| !{marked.parse(quote.text.replace(/\n/g, "\n\n"))}
 
 				h6.ps-3
 					footer.blockquote-footer
@@ -99,7 +99,7 @@ mixin quoteBody(quote, options={})
 				div(class=(partIndex < (quote.parts.length - 1) ? "mb-3" : null))
 					h6.mb-4
 						a.text-reset.text-decoration-none(href=quoteUrl)
-							| !{marked(part.replace(/\n/g, "\n\n"))}
+							| !{marked.parse(part.replace(/\n/g, "\n\n"))}
 
 					h6.ps-3
 						footer.blockquote-footer
