@@ -48,3 +48,14 @@ html
 			$(document).ready(function() {
 				$('[data-bs-toggle="tooltip"]').tooltip();
 			});
+
+		if (userMessage || userMessageMarkdown)
+			script.
+				var toastElementList = [].slice.call(document.querySelectorAll('.toast'))
+				var toastList = toastElementList.map(function (toastElement) {
+					return new bootstrap.Toast(toastElement, {});
+				});
+
+				var userMessageToastElement = document.getElementById('userMessageToast');
+				var userMessageToast = bootstrap.Toast.getOrCreateInstance(userMessageToastElement);
+				userMessageToast.show();
