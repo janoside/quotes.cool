@@ -1,7 +1,7 @@
-$body-bg: #041f47;
+$body-bg: #0f1826;
 $body-color: #fafcfc;
 
-$main-bg: darken($body-bg, 6%);
+$main-bg: darken($body-bg, 4%);
 
 $text-muted: #b7bfc7;
 
@@ -12,13 +12,14 @@ $dark: #22272b;
 );*/
 
 
-$blue: #0d6efd;
+$blue: #0a58cc;
+$cyan: #0aaccc;
 $link-color: $blue;
 
 
 
 
-$border-color: lighten($body-bg, 4%);
+$border-color: lighten($body-bg, 7%);
 
 $card-border-color: $border-color;
 
@@ -80,7 +81,7 @@ $modal-content-color: $body-color;
 $article-color-base: rgba(255, 255, 255, 0.92);
 $article-color-blockquote: rgba(255, 255, 255, 0.68);
 $article-color-subtitle: rgba(255, 255, 255, 0.54);
-$article-color-selected-text: black;
+$article-color-selected-text: darken($blue, 5%);
 
 
 
@@ -182,6 +183,16 @@ code {
 	background-color: lighten($card-bg, 6%);
 }
 
+.markdown-body code, .markdown-body tt {
+	background-color: lighten($card-bg, 11%);
+}
+
 .markdown-body table th, .markdown-body table td {
 	border: 1px solid lighten($card-bg, 15%);
+}
+
+
+
+::selection {
+	background-color: $article-color-selected-text;
 }
