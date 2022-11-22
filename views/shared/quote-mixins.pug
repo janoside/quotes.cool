@@ -131,11 +131,11 @@ mixin quoteBody(quote, options={})
 		.mb-2
 			each tag, tagIndex in quote.tags
 				if (noTagLinks)
-					span.badge.bg-primary.me-1
+					span.badge.text-bg-primary.me-1
 						i.bi-tag-fill.me-1
 						| #{tag}
 				else
-					a.badge.bg-primary.non-underline-link.me-1(href=`/tags/${tag}`)
+					a.badge.text-bg-primary.non-underline-link.me-1(href=`/tags/${tag}`)
 						i.bi-tag-fill.me-1
 						| #{tag}
 
@@ -143,12 +143,12 @@ mixin quoteBody(quote, options={})
 		.mb-2
 			- var quoteUsername = quote.username;
 			if (noUserLinks)
-				span.badge.bg-info
+				span.badge.text-bg-info
 					i.bi-person-circle.me-1
 					| #{quoteUsername}
 
 			else
-				a.badge.bg-info(href=`/${quoteUsername}/quotes`)
+				a.badge.text-bg-info(href=`/${quoteUsername}/quotes`)
 					i.bi-person-circle.me-1
 					| #{quoteUsername}
 

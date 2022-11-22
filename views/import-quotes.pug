@@ -2,7 +2,7 @@ extends layout
 
 block content
 	h1 My Import 
-		span.badge.bg-primary #{importId}
+		span.badge.text-bg-primary #{importId}
 
 	.card.mb-3
 		.card-body
@@ -34,7 +34,7 @@ block content
 		.card-body
 			h3 Speakers
 			each speaker in uniqueSpeakers
-				span.badge.bg-secondary.me-2 #{speaker}
+				span.badge.text-bg-secondary.me-2 #{speaker}
 
 	h3 Quotes
 
