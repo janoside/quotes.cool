@@ -32,9 +32,10 @@
 		"css-light-debug": "sass --style expanded --source-map scss ./public/scss/light.scss ./public/style/light.css",
 		"css-dark-debug": "sass --style expanded --source-map scss ./public/scss/dark.scss ./public/style/dark.css",
 		"css-debug": "npm-run-all css-light-debug css-dark-debug",
-		"css-light": "sass --style compressed --precision 6 ./public/scss/light.scss ./public/style/light.css",
-		"css-dark": "sass --style compressed --precision 6 ./public/scss/dark.scss ./public/style/dark.css",
-		"css": "npm-run-all css-light css-dark",
+		"css-light": "sass --style compressed --precision 6 ./public/scss/light.scss ./public/style/light.min.css",
+		"css-dark": "sass --style compressed --precision 6 ./public/scss/dark.scss ./public/style/dark.min.css",
+		"css-dark2": "sass --style compressed --precision 6 ./public/scss/dark2.scss ./public/style/dark2.min.css",
+		"css": "npm-run-all css-light css-dark css-dark2",
 		"test-s3": "node ./bin/test-s3.js",
 		"test-encryptor": "node ./bin/test-encryptor.js"
 	},

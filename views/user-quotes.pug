@@ -5,8 +5,7 @@ block headContent
 
 block content
 	+quoteListPageHeader(quoteCount, limit, offset, sort, paginationBaseUrl)
-		h1 #{quoteCount.toLocaleString()} Quote
-			| #{quoteCount != 1 ? "s" : ""}
+		+pageTitle(`${quoteCount.toLocaleString()} Quote${quoteCount != 1 ? "s" : ""}`)
 	
 	
 	hr
