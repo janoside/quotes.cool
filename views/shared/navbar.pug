@@ -8,7 +8,7 @@
 
 			if (session.username)
 				div
-					a.btn.btn-primary.btn-sm#navbarDropdown.text-white.nav-link.dropdown-toggle(href="javascript:void(0)", role="button", data-bs-toggle="dropdown", aria-haspopup="true", aria-expanded="false")
+					a.btn.btn-primary.p-2.py-1#navbarDropdown.text-white.nav-link.dropdown-toggle(href="javascript:void(0)", role="button", data-bs-toggle="dropdown", aria-haspopup="true", aria-expanded="false")
 						i.bi-person-circle.me-2
 
 					.dropdown-menu.dropdown-menu-end(aria-labelledby="navbarDropdown")
@@ -58,9 +58,14 @@
 			ul.nav.col-12.col-lg-auto.me-lg-auto.mb-2.justify-content-between.my-3.my-lg-0
 				if (session.user)
 					li
-						a.nav-link.active.fw-light.me-2.ps-2.pb-lg-0(href="/new-quote", title="New Quote", data-bs-toggle="tooltip", data-bs-placement="bottom")
+						a.nav-link.active.fw-light.me-2.ps-2.pb-lg-0(href="/new-quote", title="Add a new quote", data-bs-toggle="tooltip", data-bs-placement="bottom")
 							i.bi-chat-quote-fill.fs-5.text-white.align-middle
-							span.text-white.align-middle.ms-2 New Quote
+							span.text-white.align-middle.ms-2 Add Quote
+
+					li
+						a.nav-link.active.fw-light.me-2.ps-2.pb-lg-0(href="/random", title="See a random quote from your list", data-bs-toggle="tooltip", data-bs-placement="bottom")
+							i.bi-shuffle.fs-5.text-white.align-middle
+							span.text-white.align-middle.ms-2 Random
 
 					li
 						a.nav-link.fw-light.me-2.ps-1.pb-lg-0(href="/tags", title="View all tags", data-bs-toggle="tooltip", data-bs-placement="bottom")

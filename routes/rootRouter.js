@@ -657,6 +657,32 @@ router.get("/speaker/:speaker/tags/:tags", asyncHandler(async (req, res, next) =
 	res.render("speaker-tags-quotes");
 }));
 
+router.get("/random", asyncHandler(async (req, res, next) => {
+	if (!req.session.user) {
+		res.redirect("/");
+
+		return;
+	}
+
+	const username = req.session.username;
+
+	const quotesCollection = await db.getCollection("quotes");
+
+	
+	const user = await db.findOne("users", {username: username});
+
+	const randomQuotes = await quotesCollection.aggregate([
+		{ $match: { userId: user._id.toString() } },
+		{ $sample: { size: 1 } }
+	]).toArray();
+
+	res.locals.username = username;
+	res.locals.user = user;
+	res.locals.quote = randomQuotes[0];
+
+	res.render("quote");
+}));
+
 router.get("/import", asyncHandler(async (req, res, next) => {
 	res.render("import");
 }));
