@@ -5,14 +5,11 @@ block headContent
 
 block content
 	+quoteListPageHeader(quoteCount, limit, offset, sort, paginationBaseUrl)
-		h1 #{quoteCount.toLocaleString()} Quote
-			| #{quoteCount != 1 ? "s" : ""}
-			|  from 
+		+pageTitle(`${quoteCount.toLocaleString()} Quote${quoteCount != 1 ? "s" : ""} from`)
 			a.badge.text-bg-primary.me-1(href=`./speaker/${speaker}`)
 				i.bi-person-fill.me-2
 				| #{speaker}
 				
 
-	hr
 
 	include ./shared/quotes-list.pug

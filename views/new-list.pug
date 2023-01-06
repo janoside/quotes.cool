@@ -1,9 +1,9 @@
 extends layout
 
 block content
-	h1.mb-3 New List
-	hr
+	+pageTitle("New List")
 
+	
 	h5.mb-4 Lists make it easy to publicly share a set of quotes. Configure the details of your list below.
 
 	form(method="post", action="/new-list")

@@ -1,8 +1,8 @@
 extends adminLayout
 
 block adminContent
-	h1 User: #{user.username}
-	hr
+	+pageTitle(`User: ${user.username}`)
+
 
 	.mb-4
 		table.table.table-striped
@@ -27,9 +27,8 @@ block adminContent
 				td.text-monospace #{utils.formatDate(user.updatedAt)}
 	
 
-	hr
 	
-	.col-md-3
+	.mt-6
 		a.btn.btn-primary.me-3(href=`/admin/user/${user.username}/add-role/admin`) Promote to Admin
 		a.btn.btn-danger.btn-block(href=`/admin/user/${user.username}/delete`) Delete User
 			

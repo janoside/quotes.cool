@@ -1,14 +1,17 @@
 extends layout
 
 block content
-	h1 #{quotes.length.toLocaleString()} Quote
-		| #{quotes.length != 1 ? "s" : ""} 
-		| in 
-		span.badge.text-bg-primary
-			i.bi-list.me-2
-			| #{list.name}
+	+quoteListPageHeader(quotes, limit, offset, sort, paginationBaseUrl)
+		+pageTitle(`${quotes.length.toLocaleString()} Quote${quotes.length != 1 ? "s" : ""} in`)
+			span.badge.text-bg-primary
+				i.bi-list.me-2
+				| #{list.name}
 
-	.grid
-		each quote, quoteIndex in quotes
-			.grid-item.col-xl-4.col-sm-6.p-0.px-md-2
-				+quoteCard(quote, {quoteList:true})
+	- var offset = 0;
+	- var quoteCount = quotes.length;
+
+	include ./shared/quotes-list.pug
+
+
+
+	

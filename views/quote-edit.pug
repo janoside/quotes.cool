@@ -1,7 +1,8 @@
 extends layout
 
 block content
-	h1 Edit Quote
+	+pageTitle("Edit Quote")
+	
 
 	form.article(method="post", action=`/quote/${quote._id}/edit`)
 		fieldset.mb-4

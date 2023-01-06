@@ -1,53 +1,48 @@
 extends layout
 
 block content
-	h1 My Account
-	hr
+	+pageTitle("My Account")
 
-	h2.h5 Tools
-	.card.mb-3
-		.card-body
-			- var buttons = [["/export", "Export All", "bi-download", "Export all of your quotes"]];
 
-			.d-none.d-md-block
-				each item in buttons
-					a.btn.btn-primary.me-2(href=item[0], title=item[3], data-bs-toggle="tooltip", target="_blank")
-						i.me-2(class=item[2])
-						| #{item[1]}
+	+contentSection("Tools")
+		- var buttons = [["/export", "Export All", "bi-download", "Export all of your quotes"]];
 
-				
-			.d-md-none
-				each item in buttons
-					a.btn.btn-primary.btn-block(href=item[0], title=item[3], data-bs-toggle="tooltip", target="_blank")
-						i.me-2(class=item[2])
-						| #{item[1]}
+		.d-none.d-md-block
+			each item in buttons
+				a.btn.btn-primary.me-2(href=item[0], title=item[3], data-bs-toggle="tooltip", target="_blank")
+					i.me-2(class=item[2])
+					| #{item[1]}
+
+			
+		.d-md-none
+			each item in buttons
+				a.btn.btn-primary.btn-block(href=item[0], title=item[3], data-bs-toggle="tooltip", target="_blank")
+					i.me-2(class=item[2])
+					| #{item[1]}
+			
 
 	
 
-	h2.h5 My Lists
-	.card.mb-3
-		.card-body
-			ol.mb-0.ps-4
-				each list, listIndex in lists
-					li(class=(listIndex < (lists.length - 1) ? "mb-1" : false))
-						a(href=`/list/${list._id}`) #{list.name}
+	+contentSection("My Lists")
+		ol.mb-0.ps-4
+			each list, listIndex in lists
+				li(class=(listIndex < (lists.length - 1) ? "mb-1" : false))
+					a(href=`/list/${list._id}`) #{list.name}
 
 
-	h2.h5 My Imports
-	.card
-		.card-body
-			if (importData && importData.length > 0 && importData[0]._id)
-				h5
-					ul
-						each item in importData
-							if (item._id)
-								li.mb-2
-									if (item.name)
-										a(href=`/import/${item._id}`) #{item.name}
-									else
-										a(href=`/import/${item._id}`) #{item._id}
-									
-									span.badge.text-bg-secondary.ms-2 #{item.count.toLocaleString()}
-			
-			else
-				.text-muted None
+	+contentSection("My Imports")
+		if (importData && importData.length > 0 && importData[0]._id)
+			h5
+				ul
+					each item in importData
+						if (item._id)
+							li.mb-2
+								if (item.name)
+									a(href=`/import/${item._id}`) #{item.name}
+								else
+									a(href=`/import/${item._id}`) #{item._id}
+								
+								span.badge.text-bg-secondary.ms-2 #{item.count.toLocaleString()}
+		
+		else
+			.text-muted None
