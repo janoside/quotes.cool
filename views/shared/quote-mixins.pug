@@ -77,7 +77,7 @@ mixin quoteBody(quote, options={})
 										| & 
 									
 									if (noSpeakerLinks)
-										span.speaker-non-link.text-dark #{speaker}
+										span.speaker-non-link #{speaker}
 									else
 										a(href=`/speaker/${encodeURIComponent(speaker)}`) #{speaker ? speaker : "Unknown"}
 
@@ -88,7 +88,7 @@ mixin quoteBody(quote, options={})
 										small (#{quote.speakerContexts[speakerIndex]})
 							else
 								if (noSpeakerLinks)
-									span.speaker-non-link.text-dark #{Unknown}
+									span.speaker-non-link #{Unknown}
 								else
 									a(href=`/speaker/unknown`) Unknown
 
@@ -106,7 +106,7 @@ mixin quoteBody(quote, options={})
 							i
 								if (quote.speakers && quote.speakers.length > partIndex)
 									if (noSpeakerLinks)
-										span.speaker-non-link.text-dark #{quote.speakers[partIndex]}
+										span.speaker-non-link #{quote.speakers[partIndex]}
 									else
 										a(href=`/speaker/${encodeURIComponent(quote.speakers[partIndex])}`) #{quote.speakers[partIndex] ? quote.speakers[partIndex] : "Unknown"}
 
@@ -117,7 +117,7 @@ mixin quoteBody(quote, options={})
 										small (#{quote.speakerContexts[partIndex]})
 								else
 									if (noSpeakerLinks)
-										span.speaker-non-link.text-dark Unknown
+										span.speaker-non-link Unknown
 									else
 										a(href=`/speaker/unknown`) Unknown
 
