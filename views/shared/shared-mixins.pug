@@ -102,6 +102,12 @@ mixin table(striped=true)
 			block
 
 
+mixin card()
+	.card.shadow-sm.mb-3
+		.card-body
+			block
+
+
 mixin quoteListPageHeader(quoteCount, limit, offset, sort, paginationBaseUrl)
 	.d-md-flex.justify-content-between
 		.text-center

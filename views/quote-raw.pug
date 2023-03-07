@@ -6,7 +6,6 @@ block content
 		a(href=`/quote/${quote._id.toString()}`) Quote
 		|  &raquo; Raw Data
 
-	.card
-		.card-body
-			pre
-				code #{JSON.stringify(quote, null, 4)}
+	+card
+		pre
+			code #{JSON.stringify(quote, null, 4)}

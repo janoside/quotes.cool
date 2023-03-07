@@ -100,4 +100,15 @@ router.get("/user/:username/delete", asyncHandler(async (req, res, next) => {
 }));
 
 
+router.get("/data-migrations", asyncHandler(async (req, res, next) => {
+	res.locals.dataMigrationsCount = await db.countDocuments("dataMigrations");
+	
+	const dataMigrations = await db.findMany("dataMigrations", {});
+
+	res.locals.dataMigrations = dataMigrations;
+
+	res.render("admin/dataMigrations");
+}));
+
+
 module.exports = router;

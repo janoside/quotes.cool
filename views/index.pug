@@ -8,57 +8,48 @@ block content
 		h1 Home
 		hr
 
-		.card.mb-2
-			.card-body
-				- var buttons = [[`/${session.username}/quotes`, "My Quotes", "bi-list", quoteCount], ["/tags", "My Tags", "bi-tag-fill", tagCount], ["/speakers", "People", "bi-people-fill", speakerCount]];
+		+card
+			- var buttons = [[`/${session.username}/quotes`, "My Quotes", "bi-list", quoteCount], ["/tags", "My Tags", "bi-tag-fill", tagCount], ["/speakers", "People", "bi-people-fill", speakerCount]];
 
-				.d-none.d-md-block
-					each item in buttons
-						a.btn.btn-primary.me-2(href=item[0])
-							i.me-2(class=item[2])
-							| #{item[1]}
-							if (item.length > 3)
-								span.badge.text-bg-light.ms-2 #{item[3].toLocaleString()}
+			.d-none.d-md-block
+				each item in buttons
+					a.btn.btn-primary.me-2(href=item[0])
+						i.me-2(class=item[2])
+						| #{item[1]}
+						if (item.length > 3)
+							span.badge.text-bg-light.ms-2 #{item[3].toLocaleString()}
 
-					
-				.d-md-none.d-grid
-					each item in buttons
-						a.btn.btn-primary.mb-2(href=item[0])
-							i.me-2(class=item[2])
-							| #{item[1]}
-							if (item.length > 3)
-								span.badge.text-bg-light.ms-2 #{item[3].toLocaleString()}
-		
-		.card.mb-2
-			.card-body
-				h5 My Lists
-				hr
 				
-				h5
-					ul
-						each list in lists
-							li.mb-2
-								a(href=`/list/${list._id}`) #{list.name}
+			.d-md-none.d-grid
+				each item in buttons
+					a.btn.btn-primary.mb-2(href=item[0])
+						i.me-2(class=item[2])
+						| #{item[1]}
+						if (item.length > 3)
+							span.badge.text-bg-light.ms-2 #{item[3].toLocaleString()}
 		
-		.card.mb-2
-			.card-body
-				h5 Tools
-				hr
+		+contentSection("My Lists")
+			h5
+				ul
+					each list in lists
+						li.mb-2
+							a(href=`/list/${list._id}`) #{list.name}
+		
+		+contentSection("Tools")
+			- var buttons = [["/new-list", "New List", "bi-list", "Create a new shareable list"], ["/import", "Import Quotes", "bi-box-arrow-in-up", "Upload a list of new quotes"]];
 
-				- var buttons = [["/new-list", "New List", "bi-list", "Create a new shareable list"], ["/import", "Import Quotes", "bi-box-arrow-in-up", "Upload a list of new quotes"]];
+			.d-none.d-md-block
+				each item in buttons
+					a.btn.btn-primary.me-2(href=item[0], title=item[3], data-bs-toggle="tooltip")
+						i.me-2(class=item[2])
+						| #{item[1]}
 
-				.d-none.d-md-block
-					each item in buttons
-						a.btn.btn-primary.me-2(href=item[0], title=item[3], data-bs-toggle="tooltip")
-							i.me-2(class=item[2])
-							| #{item[1]}
-
-					
-				.d-md-none.d-grid
-					each item in buttons
-						a.btn.btn-primary.mb-2(href=item[0], title=item[3], data-bs-toggle="tooltip")
-							i.me-2(class=item[2])
-							| #{item[1]}
+				
+			.d-md-none.d-grid
+				each item in buttons
+					a.btn.btn-primary.mb-2(href=item[0], title=item[3], data-bs-toggle="tooltip")
+						i.me-2(class=item[2])
+						| #{item[1]}
 				
 
 	else

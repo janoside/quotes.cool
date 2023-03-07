@@ -1,13 +1,15 @@
 extends ../layout
 
 block content
-	.card.mb-5
-		.card-body
-			ul.nav.nav-pills
-				li.nav-item
-					a.nav-link(href="/admin", class=(path == "/admin" ? "active" : false)) Home
-				
-				li.nav-item
-					a.nav-link(href="/admin/users", class=((path == "/admin/users" || path.startsWith("/admin/user/")) ? "active" : false)) Users
+	+card
+		ul.nav.nav-pills
+			li.nav-item
+				a.nav-link(href="/admin", class=(path == "/admin" ? "active" : false)) Home
+			
+			li.nav-item
+				a.nav-link(href="/admin/users", class=((path == "/admin/users" || path.startsWith("/admin/user/")) ? "active" : false)) Users
+
+			li.nav-item
+				a.nav-link(href="/admin/data-migrations", class=(path == "/admin/data-migrations" ? "active" : false)) Data Migrations
 	
 	block adminContent

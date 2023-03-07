@@ -1,0 +1,30 @@
+extends adminLayout
+
+block headContent
+	title Admin: Data Migrations
+
+block adminContent
+	+pageTitle("Data Migrations")
+	
+
+	+card
+		+table
+			thead
+				tr
+					th #
+					th ID
+					th Name
+					th Run At
+			
+			tbody
+				each dataMigration, dataMigrationIndex in dataMigrations
+					tr.text-monospace
+						th #{(dataMigrationIndex + 1).toLocaleString()}
+						td
+							span.border-dotted(data-bs-toggle="tooltip", title=dataMigration._id) #{utils.ellipsizeFront(dataMigration._id.toLocaleString(), 8)}
+
+						td #{dataMigration.name}
+						td #{utils.formatDate(dataMigration.createdAt)}
+							
+
+					
