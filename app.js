@@ -12,7 +12,7 @@ const { DateTime } = require("luxon");
 
 const app = require("./app/app.js");
 
-const appUtils = require("@janoside/app-utils");
+const appUtils = require("./app/app-utils");
 const utils = appUtils.utils;
 
 const debugLog = debug("app:app");

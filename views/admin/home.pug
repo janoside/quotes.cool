@@ -1,24 +1,25 @@
 extends adminLayout
 
+block headContent
+	title Admin: Home
+
 block adminContent
 	+pageTitle("Admin")
 	
 
-	table.table.table-striped
-		tr
-			th App Version
-			td.text-monospace #{global.appVersion}
+	+contentSection("Summary")
+		+summaryRow(4)
+			+summaryItem("App Version")
+				| #{global.appVersion}
 
-		tr
-			th Sourcecode Version
-			td.text-monospace #{global.sourcecodeVersion}
-		
-		tr
-			th Sourcecode Date
-			td.text-monospace #{global.sourcecodeDate}
-		
-		tr
-			th App Startup
-			td.text-monospace #{utils.formatDate(global.appStartDate)}
+			+summaryItem("Sourcecode Version")
+				| #{global.sourcecodeVersion}
+
+			+summaryItem("Sourcecode Date")
+				| #{global.sourcecodeDate}
+
+			+summaryItem("App Startup")
+				| #{utils.formatDate(global.appStartDate)}
+	
 
 			

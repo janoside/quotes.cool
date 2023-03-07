@@ -6,7 +6,7 @@ const router = express.Router();
 
 const app = require("../app/app.js");
 
-const appUtils = require("@janoside/app-utils");
+const appUtils = require("../app/app-utils");
 const utils = appUtils.utils;
 
 
@@ -46,8 +46,7 @@ router.get("/users", asyncHandler(async (req, res, next) => {
 		res.locals.offset = parseInt(req.query.offset);
 	}
 
-	var userCollection = await db.getCollection("users");
-	res.locals.userCount = await userCollection.countDocuments();
+	res.locals.userCount = await db.countDocuments("users");
 	
 	var users = await db.findMany("users", {}, {limit:res.locals.limit, skip:res.locals.offset});
 
@@ -81,8 +80,7 @@ router.get("/user/:username/add-role/:role", asyncHandler(async (req, res, next)
 
 	user.roles.push(role);
 
-	const usersCollection = await db.getCollection("users");
-	const updateResult = await usersCollection.updateOne({_id:user._id}, {$set: user});
+	const updateResult = await db.updateOne("users", {_id:user._id}, {$set: user});
 
 	req.session.userMessage = `Modified '${username}'`;
 	req.session.userMessageType = "success";

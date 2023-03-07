@@ -1,34 +1,28 @@
 extends adminLayout
 
+block headContent
+	title Admin: User #{user.username}
+
 block adminContent
 	+pageTitle(`User: ${user.username}`)
 
 
-	.mb-4
-		table.table.table-striped
-			tr
-				th Username
-				td.text-monospace #{user.username}
+	+contentSection("Summary")
+		+summaryRow(2)
+			+summaryItem("Roles")
+				| #{JSON.stringify(user.roles)}
 
-			tr
-				th Roles
-				td.text-monospace
-					if (user.roles)
-						| #{user.roles}
-					else
-						| -
-			
-			tr
-				th Created At
-				td.text-monospace #{utils.formatDate(user.createdAt)}
-			
-			tr
-				th Updated At
-				td.text-monospace #{utils.formatDate(user.updatedAt)}
+			+summaryItem("Created / Updated")
+				| #{utils.formatDate(user.createdAt)}
+
+				if (user.createdAt.getTime() == user.updatedAt.getTime())
+					span.ms-2.fs-80.text-muted (both)
+
+				else
+					div #{utils.formatDate(user.updatedAt)}
 	
 
-	
-	.mt-6
+	+contentSection("Tools")
 		a.btn.btn-primary.me-3(href=`/admin/user/${user.username}/add-role/admin`) Promote to Admin
 		a.btn.btn-danger.btn-block(href=`/admin/user/${user.username}/delete`) Delete User
 			

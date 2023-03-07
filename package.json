@@ -4,6 +4,7 @@
 	"description": "A cool quotes app.",
 	"main": "app.js",
 	"dependencies": {
+		"app-utils": "file:./app/app-utils",
 		"bootstrap": "5.2.3",
 		"bootstrap-icons": "^1.5.0",
 		"cookie-parser": "^1.4.5",
@@ -13,10 +14,8 @@
 		"express-async-handler": "^1.1.4",
 		"express-session": "^1.17.2",
 		"http-errors": "^2.0.0",
-		"@janoside/app-utils": "github:janoside/app-utils#3e4933c8",
 		"luxon": "^3.1.0",
 		"marked": "^4.0.14",
-		"mongodb": "^4.1.3",
 		"morgan": "^1.10.0",
 		"pug": "^3.0.2",
 		"simple-git": "^3.7.1"

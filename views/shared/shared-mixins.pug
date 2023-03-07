@@ -96,6 +96,12 @@ mixin summaryItem(title, titleDesc, subtitle, subtitleDesc)
 	- locals.summaryItemIndex++;
 
 
+mixin table(striped=true)
+	.table-responsive
+		table.table.mb-0(class=(striped ? "table-striped table-borderless" : null))
+			block
+
+
 mixin quoteListPageHeader(quoteCount, limit, offset, sort, paginationBaseUrl)
 	.d-md-flex.justify-content-between
 		.text-center

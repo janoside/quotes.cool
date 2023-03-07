@@ -2,7 +2,6 @@ const debug = require("debug");
 const express = require("express");
 const asyncHandler = require("express-async-handler");
 
-const ObjectId = require("mongodb").ObjectId;
 const router = express.Router();
 
 const debugLog = debug("app:rootRouter");
@@ -10,7 +9,7 @@ const debugLog = debug("app:rootRouter");
 const app = require("../app/app.js");
 const appConfig = require("../app/config.js");
 
-const appUtils = require("@janoside/app-utils");
+const appUtils = require("../app/app-utils");
 const utils = appUtils.utils;
 const passwordUtils = appUtils.passwordUtils;
 
@@ -37,9 +36,8 @@ router.get("/", asyncHandler(async (req, res, next) => {
 
 		const dateSortVal = sort.startsWith("date-") ? (sort.endsWith("-desc") ? -1 : 1) : -1;
 
-		const quotesCollection = await db.getCollection("quotes");
 
-		const quoteCount = await quotesCollection.countDocuments({userId: req.session.user._id.toString()});
+		const quoteCount = await db.countDocuments("quotes", {userId: req.session.user._id.toString()});
 
 		const user = await db.findOne("users", {username: username});
 
@@ -58,12 +56,14 @@ router.get("/", asyncHandler(async (req, res, next) => {
 			offset);
 
 		
-		const tagsData = await quotesCollection.aggregate([
-			{ $match: { userId: req.session.user._id.toString() } },
-			{ $unwind: "$tags" },
-			{ $group: { _id: "$tags", count: { $sum: 1 } } },
-			{ $sort: { count: -1, _id: 1 }}
-		]).toArray();
+		const tagsData = await db.aggregate(
+			"quotes",
+			[
+				{ $match: { userId: req.session.user._id.toString() } },
+				{ $unwind: "$tags" },
+				{ $group: { _id: "$tags", count: { $sum: 1 } } },
+				{ $sort: { count: -1, _id: 1 }}
+			]).toArray();
 
 		res.locals.username = username;
 		res.locals.user = user;
@@ -107,7 +107,8 @@ router.post("/signup", asyncHandler(async (req, res, next) => {
 
 	let user = {
 		username: username,
-		passwordHash: passwordHash
+		passwordHash: passwordHash,
+		roles: []
 	};
 
 	const insertedUserId = await db.insertOne("users", user);
@@ -180,22 +181,23 @@ router.get("/settings", asyncHandler(async (req, res, next) => {
 }));
 
 router.get("/account", asyncHandler(async (req, res, next) => {
-	const quotesCollection = await db.getCollection("quotes");
-	const importData = await quotesCollection.aggregate([
-		{
-			$match: { userId: req.session.user._id.toString() }
-		},
-		{
-			$group: {
-				_id: "$importId",
-				count: { $sum: 1 },
-				name: { $first: "$importName" }
+	const importData = await db.aggregate(
+		"quotes",
+		[
+			{
+				$match: { userId: req.session.user._id.toString() }
+			},
+			{
+				$group: {
+					_id: "$importId",
+					count: { $sum: 1 },
+					name: { $first: "$importName" }
+				}
+			},
+			{
+				$sort: { count: -1 }
 			}
-		},
-		{
-			$sort: { count: -1 }
-		}
-	]).toArray();
+		]).toArray();
 
 	const lists = await db.findMany("quoteLists", { userId: req.session.user._id.toString() });
 
@@ -229,7 +231,7 @@ router.get("/quote/:quoteId", asyncHandler(async (req, res, next) => {
 	}
 
 	const quoteId = req.params.quoteId;
-	const quote = await db.findOne("quotes", {_id:ObjectId(quoteId)});
+	const quote = await db.findOne("quotes", {_id:quoteId});
 
 	if (req.session.username != quote.username) {
 		res.redirect("/");
@@ -245,7 +247,7 @@ router.get("/quote/:quoteId", asyncHandler(async (req, res, next) => {
 // publicly shareable link for a single quote
 router.get("/share/:quoteId", asyncHandler(async (req, res, next) => {
 	const quoteId = req.params.quoteId;
-	const quote = await db.findOne("quotes", {_id:ObjectId(quoteId)});
+	const quote = await db.findOne("quotes", {_id:quoteId});
 
 	res.locals.quote = quote;
 
@@ -258,7 +260,7 @@ router.get("/share/:quoteId", asyncHandler(async (req, res, next) => {
 
 router.get("/quote/:quoteId/edit", asyncHandler(async (req, res, next) => {
 	const quoteId = req.params.quoteId;
-	const quote = await db.findOne("quotes", {_id:ObjectId(quoteId)});
+	const quote = await db.findOne("quotes", {_id:quoteId});
 
 	res.locals.quote = quote;
 	res.locals.quoteTextRepresentation = app.quoteToTextRepresentation(quote);
@@ -268,7 +270,7 @@ router.get("/quote/:quoteId/edit", asyncHandler(async (req, res, next) => {
 
 router.get("/quote/:quoteId/raw", asyncHandler(async (req, res, next) => {
 	const quoteId = req.params.quoteId;
-	const quote = await db.findOne("quotes", {_id:ObjectId(quoteId)});
+	const quote = await db.findOne("quotes", {_id:quoteId});
 
 	res.locals.quote = quote;
 
@@ -278,7 +280,7 @@ router.get("/quote/:quoteId/raw", asyncHandler(async (req, res, next) => {
 router.post("/quote/:quoteId/edit", asyncHandler(async (req, res, next) => {
 	const quoteId = req.params.quoteId;
 	const updatedQuote = app.quoteFromTextRepresentation(req.body.content, req.session.user);
-	const existingQuote = await db.findOne("quotes", {_id:ObjectId(quoteId)});
+	const existingQuote = await db.findOne("quotes", {_id:quoteId});
 
 	debugLog("updatedQuote: " + JSON.stringify(updatedQuote));
 
@@ -287,8 +289,7 @@ router.post("/quote/:quoteId/edit", asyncHandler(async (req, res, next) => {
 		existingQuote[prop] = updatedQuote[prop];
 	}
 
-	const quotesCollection = await db.getCollection("quotes");
-	const updateResult = await quotesCollection.updateOne({_id:ObjectId(quoteId)}, {$set: updatedQuote});
+	const updateResult = await db.updateOne("quotes", {_id:quoteId}, {$set: updatedQuote});
 
 	req.session.userMessage = updateResult.modifiedCount == 1 ? "Quote saved." : ("Status unknown: " + JSON.stringify(updateResult));
 	req.session.userMessageType = "success";
@@ -298,7 +299,7 @@ router.post("/quote/:quoteId/edit", asyncHandler(async (req, res, next) => {
 
 router.get("/quote/:quoteId/delete", asyncHandler(async (req, res, next) => {
 	const quoteId = req.params.quoteId;
-	const quote = await db.findOne("quotes", {_id:ObjectId(quoteId)});
+	const quote = await db.findOne("quotes", {_id:quoteId});
 
 	res.locals.quote = quote;
 
@@ -307,7 +308,7 @@ router.get("/quote/:quoteId/delete", asyncHandler(async (req, res, next) => {
 
 router.post("/quote/:quoteId/delete", asyncHandler(async (req, res, next) => {
 	const quoteId = req.params.quoteId;
-	const quote = await db.findOne("quotes", {_id:ObjectId(quoteId)});
+	const quote = await db.findOne("quotes", {_id:quoteId});
 
 	const result = await db.deleteOne("quotes", {_id:quote._id});
 
@@ -345,9 +346,8 @@ router.get("/:username/quotes", asyncHandler(async (req, res, next) => {
 
 	const dateSortVal = sort.startsWith("date-") ? (sort.endsWith("-desc") ? -1 : 1) : -1;
 
-	const quotesCollection = await db.getCollection("quotes");
 
-	const quoteCount = await quotesCollection.countDocuments({userId: req.session.user._id.toString()});
+	const quoteCount = await db.countDocuments("quotes", {userId: req.session.user._id.toString()});
 
 	const user = await db.findOne("users", {username: username});
 
@@ -434,33 +434,35 @@ router.get("/tags/:tags", asyncHandler(async (req, res, next) => {
 		offset
 	);
 
-	const quotesCollection = await db.getCollection("quotes");
 
-	const quoteCount = await quotesCollection.countDocuments(
+	const quoteCount = await db.countDocuments(
+		"quotes",
 		{
 			userId: req.session.user._id.toString(),
 			tags: { $all: tags }
 		}
 	);
 
-	const tagsData = await quotesCollection.aggregate([
-		{ $match:
-			{
-				$and: [
-					{
-						$or: [
-							{ userId: req.session.user._id.toString() },
-							{ visibility: "public" }
-						]
-					},
-					{ tags: { $all: tags }}
-				]
-			}
-		},
-		{ $unwind: "$tags" },
-		{ $group: { _id: "$tags", count: { $sum: 1 } } },
-		{ $sort: { count: -1, _id: 1 }}
-	]).toArray();
+	const tagsData = await db.aggregate(
+		"quotes",
+		[
+			{ $match:
+				{
+					$and: [
+						{
+							$or: [
+								{ userId: req.session.user._id.toString() },
+								{ visibility: "public" }
+							]
+						},
+						{ tags: { $all: tags }}
+					]
+				}
+			},
+			{ $unwind: "$tags" },
+			{ $group: { _id: "$tags", count: { $sum: 1 } } },
+			{ $sort: { count: -1, _id: 1 }}
+		]).toArray();
 
 
 	res.locals.tags = tags;
@@ -522,33 +524,35 @@ router.get("/speaker/:speaker", asyncHandler(async (req, res, next) => {
 		offset
 	);
 
-	const quotesCollection = await db.getCollection("quotes");
 
-	const quoteCount = await quotesCollection.countDocuments(
+	const quoteCount = await db.countDocuments(
+		"quotes",
 		{
 			userId: req.session.user._id.toString(),
 			speakers: speaker
 		}
 	);
 
-	const tagsData = await quotesCollection.aggregate([
-		{ $match:
-			{
-				$and: [
-					{
-						$or: [
-							{ userId: req.session.user._id.toString() },
-							{ visibility: "public" }
-						]
-					},
-					{ speakers: speaker }
-				]
-			}
-		},
-		{ $unwind: "$tags" },
-		{ $group: { _id: "$tags", count: { $sum: 1 } } },
-		{ $sort: { count: -1, _id: 1 }}
-	]).toArray();
+	const tagsData = await db.aggregate(
+		"quotes",
+		[
+			{ $match:
+				{
+					$and: [
+						{
+							$or: [
+								{ userId: req.session.user._id.toString() },
+								{ visibility: "public" }
+							]
+						},
+						{ speakers: speaker }
+					]
+				}
+			},
+			{ $unwind: "$tags" },
+			{ $group: { _id: "$tags", count: { $sum: 1 } } },
+			{ $sort: { count: -1, _id: 1 }}
+		]).toArray();
 
 	res.locals.speaker = speaker;
 	res.locals.quoteCount = quoteCount;
@@ -613,9 +617,9 @@ router.get("/speaker/:speaker/tags/:tags", asyncHandler(async (req, res, next) =
 		offset
 	);
 
-	const quotesCollection = await db.getCollection("quotes");
 
-	const quoteCount = await quotesCollection.countDocuments(
+	const quoteCount = await db.countDocuments(
+		"quotes",
 		{
 			userId: req.session.user._id.toString(),
 			speakers: speaker,
@@ -623,25 +627,27 @@ router.get("/speaker/:speaker/tags/:tags", asyncHandler(async (req, res, next) =
 		}
 	);
 
-	const tagsData = await quotesCollection.aggregate([
-		{ $match:
-			{
-				$and: [
-					{
-						$or: [
-							{ userId: req.session.user._id.toString() },
-							{ visibility: "public" }
-						]
-					},
-					{ speakers: speaker },
-					{ tags: { $all: tags }}
-				]
-			}
-		},
-		{ $unwind: "$tags" },
-		{ $group: { _id: "$tags", count: { $sum: 1 } } },
-		{ $sort: { count: -1, _id: 1 }}
-	]).toArray();
+	const tagsData = await db.aggregate(
+		"quotes",
+		[
+			{ $match:
+				{
+					$and: [
+						{
+							$or: [
+								{ userId: req.session.user._id.toString() },
+								{ visibility: "public" }
+							]
+						},
+						{ speakers: speaker },
+						{ tags: { $all: tags }}
+					]
+				}
+			},
+			{ $unwind: "$tags" },
+			{ $group: { _id: "$tags", count: { $sum: 1 } } },
+			{ $sort: { count: -1, _id: 1 }}
+		]).toArray();
 
 	res.locals.speaker = speaker;
 	res.locals.quoteCount = quoteCount;
@@ -666,15 +672,15 @@ router.get("/random", asyncHandler(async (req, res, next) => {
 
 	const username = req.session.username;
 
-	const quotesCollection = await db.getCollection("quotes");
-
 	
 	const user = await db.findOne("users", {username: username});
 
-	const randomQuotes = await quotesCollection.aggregate([
-		{ $match: { userId: user._id.toString() } },
-		{ $sample: { size: 1 } }
-	]).toArray();
+	const randomQuotes = await db.aggregate(
+		"quotes",
+		[
+			{ $match: { userId: user._id.toString() } },
+			{ $sample: { size: 1 } }
+		]).toArray();
 
 	res.locals.username = username;
 	res.locals.user = user;
@@ -741,8 +747,7 @@ router.get("/import/:importId/export", asyncHandler(async (req, res, next) => {
 router.post("/import/:importId/delete", asyncHandler(async (req, res, next) => {
 	const importId = req.params.importId;
 	
-	const quotesCollection = await db.getCollection("quotes");
-	const deleteResult = await quotesCollection.deleteMany({importId:importId});
+	const deleteResult = await db.deleteMany("quotes", {importId:importId});
 
 	req.session.userMessage = "Delete result: " + JSON.stringify(deleteResult);
 	
@@ -813,9 +818,9 @@ router.get("/search", asyncHandler(async (req, res, next) => {
 		offset
 	);
 
-	const quotesCollection = await db.getCollection("quotes");
 
-	const quoteCount = await quotesCollection.countDocuments(
+	const quoteCount = await db.countDocuments(
+		"quotes",
 		{
 			$and: [
 				{
@@ -837,23 +842,25 @@ router.get("/search", asyncHandler(async (req, res, next) => {
 		}
 	);
 
-	const tagsData = await quotesCollection.aggregate([
-		{
-			$match: {
-				userId: req.session.user._id.toString(),
-				$or:[
-					{ text: regex },
-					{ parts: regex },
-					{ speakers: regex },
-					{ speakerContexts: regex },
-					{ tags: regex }
-				]
-			}
-		},
-		{ $unwind: "$tags" },
-		{ $group: { _id: "$tags", count: { $sum: 1 } } },
-		{ $sort: { count: -1, _id: 1 }}
-	]).toArray();
+	const tagsData = await db.aggregate(
+		"quotes",
+		[
+			{
+				$match: {
+					userId: req.session.user._id.toString(),
+					$or:[
+						{ text: regex },
+						{ parts: regex },
+						{ speakers: regex },
+						{ speakerContexts: regex },
+						{ tags: regex }
+					]
+				}
+			},
+			{ $unwind: "$tags" },
+			{ $group: { _id: "$tags", count: { $sum: 1 } } },
+			{ $sort: { count: -1, _id: 1 }}
+		]).toArray();
 	
 	res.locals.query = query;
 	res.locals.quoteCount = quoteCount;
@@ -870,13 +877,14 @@ router.get("/search", asyncHandler(async (req, res, next) => {
 }));
 
 router.get("/tags", asyncHandler(async (req, res, next) => {
-	const quotesCollection = await db.getCollection("quotes");
-	const tagsData = await quotesCollection.aggregate([
-		{ $match: { userId: req.session.user._id.toString() } },
-		{ $unwind: "$tags" },
-		{ $group: { _id: "$tags", count: { $sum: 1 } } },
-		{ $sort: { count: -1, _id: 1 }}
-	]).toArray();
+	const tagsData = await db.aggregate(
+		"quotes",
+		[
+			{ $match: { userId: req.session.user._id.toString() } },
+			{ $unwind: "$tags" },
+			{ $group: { _id: "$tags", count: { $sum: 1 } } },
+			{ $sort: { count: -1, _id: 1 }}
+		]).toArray();
 
 	res.locals.tagsData = tagsData;
 	
@@ -884,13 +892,14 @@ router.get("/tags", asyncHandler(async (req, res, next) => {
 }));
 
 router.get("/speakers", asyncHandler(async (req, res, next) => {
-	const quotesCollection = await db.getCollection("quotes");
-	const speakersData = await quotesCollection.aggregate([
-		{ $match: { userId: req.session.user._id.toString() } },
-		{ $unwind: "$speakers" },
-		{ $group: { _id: "$speakers", count: { $sum: 1 } } },
-		{ $sort: { count: -1, _id: 1 }}
-	]).toArray();
+	const speakersData = await db.aggregate(
+		"quotes",
+		[
+			{ $match: { userId: req.session.user._id.toString() } },
+			{ $unwind: "$speakers" },
+			{ $group: { _id: "$speakers", count: { $sum: 1 } } },
+			{ $sort: { count: -1, _id: 1 }}
+		]).toArray();
 
 	res.locals.speakersData = speakersData;
 	
@@ -949,7 +958,7 @@ router.post("/new-list", asyncHandler(async (req, res, next) => {
 
 router.get("/list/:listId", asyncHandler(async (req, res, next) => {
 	const listId = req.params.listId;
-	const list = await db.findOne("quoteLists", {_id:new ObjectId(listId)});
+	const list = await db.findOne("quoteLists", {_id:listId});
 
 	const queryAnds = [];
 	
@@ -1008,8 +1017,8 @@ router.get("/list/:listId", asyncHandler(async (req, res, next) => {
 }));
 
 router.get("/list/:listId/:quoteId", asyncHandler(async (req, res, next) => {
-	const list = await db.findOne("quoteLists", {_id:ObjectId(req.params.listId)});
-	const quote = await db.findOne("quotes", {_id:ObjectId(req.params.quoteId)});
+	const list = await db.findOne("quoteLists", {_id:req.params.listId});
+	const quote = await db.findOne("quotes", {_id:req.params.quoteId});
 
 	res.locals.list = list;
 	res.locals.quote = quote;

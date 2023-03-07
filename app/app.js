@@ -5,7 +5,7 @@ const ObjectId = require("mongodb").ObjectId;
 
 const appConfig = require("./config.js");
 
-const appUtils = require("@janoside/app-utils");
+const appUtils = require("./app-utils");
 const utils = appUtils.utils;
 const passwordUtils = appUtils.passwordUtils;
 
@@ -265,22 +265,23 @@ function quoteToTextRepresentation(quote) {
 }
 
 async function getImports(user) {
-	const quotesCollection = await db.getCollection("quotes");
-	const importData = await quotesCollection.aggregate([
-		{
-			$match: { userId: user._id.toString() }
-		},
-		{
-			$group: {
-				_id: "$importId",
-				count: { $sum: 1 },
-				name: { $first: "$importName" }
+	const importData = await db.aggregate(
+		"quotes",
+		[
+			{
+				$match: { userId: user._id.toString() }
+			},
+			{
+				$group: {
+					_id: "$importId",
+					count: { $sum: 1 },
+					name: { $first: "$importName" }
+				}
+			},
+			{
+				$sort: { count: -1 }
 			}
-		},
-		{
-			$sort: { count: -1 }
-		}
-	]).toArray();
+		]).toArray();
 
 	return importData;
 }

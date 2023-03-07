@@ -2,7 +2,7 @@ const debug = require("debug");
 
 const appConfig = require("./config.js");
 
-const appUtils = require("@janoside/app-utils");
+const appUtils = require("./app-utils");
 const passwordUtils = appUtils.passwordUtils;
 
 const mongoClient = appUtils.mongoClient;
@@ -94,32 +94,41 @@ const dbSchema = [
 const connect = async () => {
 	global.db = await mongoClient.createClient(dbConfig.host, dbConfig.port, dbConfig.username, dbConfig.password, dbConfig.name, dbSchema);
 
-	await createAdminUserIfNeeded();
+	await mongoClient.createAdminUserIfNeeded(db, appConfig.db.adminUser.username, appConfig.db.adminUser.password);
+	await runMigrationsAsNeeded();
 
 	return global.db;
 };
 
-const createAdminUserIfNeeded = async () => {
-	// create admin user if needed
-	const adminUser = await db.findOne("users", {username: appConfig.db.adminUser.username});
-	if (!adminUser) {
-		debugLog(`Creating admin user '${appConfig.db.adminUser.username}'...`);
 
-		const passwordHash = await passwordUtils.hash(appConfig.db.adminUser.password);
+const runMigrationsAsNeeded = async () => {
+	const migrations = [
+		// example of how to add a property
+		/*{
+			name: "addTestPropA",
+			collection: "items",
+			filter: { hasImage: true },
+			updateFunc: {$set: {testXyz:"123"}}
+		},*/
+		
+		// example of how to remove a property
+		/*{
+			name: "removeTestPropA",
+			collection: "items",
+			filter: { },
+			updateFunc: {$unset: {testXyz:""}}
+		},*/
 
-		const adminUser = {
-			username: appConfig.db.adminUser.username,
-			passwordHash: passwordHash,
-			roles: ["admin"]
-		};
+		{
+			name: "add-user-roles",
+			collection: "users",
+			filter: { roles: { $exists: false }},
+			updateFunc: { $set: { roles: [] }}
+		}
+	];
 
-		await db.insertOne("users", adminUser);
 
-		debugLog(`Admin user '${appConfig.db.adminUser.username}' created.`);
-
-	} else {
-		debugLog(`Admin user '${appConfig.db.adminUser.username}' already exists`);
-	}
+	await mongoClient.runMigrationsAsNeeded(db, migrations);
 };
 
 
