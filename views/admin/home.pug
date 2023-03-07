@@ -8,7 +8,7 @@ block adminContent
 	
 
 	+contentSection("Summary")
-		+summaryRow(4)
+		+summaryRow(5)
 			+summaryItem("App Version")
 				| #{global.appVersion}
 
@@ -20,6 +20,12 @@ block adminContent
 
 			+summaryItem("App Startup")
 				| #{utils.formatDate(global.appStartDate)}
+
+			+summaryItem("Node Version")
+				| #{global.nodeVersion}
 	
 
-			
+	
+
+	+adminModal("Session", "Session")
+		pre #{JSON.stringify(session,  null, 4)}

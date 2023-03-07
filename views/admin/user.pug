@@ -25,4 +25,6 @@ block adminContent
 	+contentSection("Tools")
 		a.btn.btn-primary.me-3(href=`/admin/user/${user.username}/add-role/admin`) Promote to Admin
 		a.btn.btn-danger.btn-block(href=`/admin/user/${user.username}/delete`) Delete User
-			
+	
+	+adminModal("User", "User")
+		pre #{JSON.stringify(user, null, 4)}

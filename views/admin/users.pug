@@ -2,7 +2,7 @@ extends adminLayout
 
 block headContent
 	title Admin: Users
-		
+
 block adminContent
 	+pageTitle("Users")
 	
@@ -18,20 +18,28 @@ block adminContent
 					th ID
 					th Username
 					th Roles
+					th Last Login
 					th Created At
-					th Updated At
 			
 			tbody
 				each user, userIndex in users
 					tr.text-monospace
 						th #{(offset + userIndex + 1).toLocaleString()}
+
 						td
 							span.border-dotted(data-bs-toggle="tooltip", title=user._id) #{utils.ellipsizeFront(user._id.toLocaleString(), 8)}
 						td
 							a(href=`/admin/user/${user.username}`) #{user.username}
-						td #{user.roles ? user.roles : "-"}
+
+						td #{JSON.stringify(user.roles)}
+
+						td
+							if (user.lastLogin)
+								| #{utils.formatDate(user.lastLogin)}
+							else
+								| -
+
 						td #{utils.formatDate(user.createdAt)}
-						td #{utils.formatDate(user.updatedAt)}
 
 
 			

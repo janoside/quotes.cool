@@ -139,6 +139,11 @@ router.post("/login", asyncHandler(async (req, res, next) => {
 	const user = await app.authenticate(req.body.username, req.body.password);
 
 	if (user) {
+		user.lastLogin = new Date();
+
+		const updateResult = await db.updateOne("users", {_id:user._id}, {$set:{lastLogin:user.lastLogin}});
+
+
 		req.session.username = user.username;
 		req.session.user = user;
 
@@ -176,9 +181,6 @@ router.get("/logout", async (req, res, next) => {
 	res.redirect("/");
 });
 
-router.get("/settings", asyncHandler(async (req, res, next) => {
-	res.render("settings");
-}));
 
 router.get("/account", asyncHandler(async (req, res, next) => {
 	const importData = await db.aggregate(
