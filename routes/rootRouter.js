@@ -368,12 +368,14 @@ router.get("/:username/quotes", asyncHandler(async (req, res, next) => {
 		offset);
 
 	
-	const tagsData = await quotesCollection.aggregate([
-		{ $match: { userId: req.session.user._id.toString() } },
-		{ $unwind: "$tags" },
-		{ $group: { _id: "$tags", count: { $sum: 1 } } },
-		{ $sort: { count: -1, _id: 1 }}
-	]).toArray();
+	const tagsData = await db.aggregate(
+		"quotes",
+		[
+			{ $match: { userId: req.session.user._id.toString() } },
+			{ $unwind: "$tags" },
+			{ $group: { _id: "$tags", count: { $sum: 1 } } },
+			{ $sort: { count: -1, _id: 1 }}
+		]).toArray();
 
 	res.locals.username = username;
 	res.locals.user = user;
