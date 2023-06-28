@@ -146,7 +146,7 @@ expressApp.use(async (req, res, next) => {
 	res.locals.userSettings = userSettings;
 
 	if (!userSettings.uiTheme) {
-		userSettings.uiTheme = "light";
+		userSettings.uiTheme = "dark";
 	}
 
 
