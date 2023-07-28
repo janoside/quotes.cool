@@ -10,7 +10,7 @@
 			"license": "MIT",
 			"dependencies": {
 				"app-utils": "file:./app/app-utils",
-				"bootstrap": "5.2.3",
+				"bootstrap": "5.3.1",
 				"bootstrap-icons": "^1.5.0",
 				"cookie-parser": "^1.4.5",
 				"debug": "^4.3.2",
@@ -1689,9 +1689,9 @@
 			"integrity": "sha512-Tpp60P6IUJDTuOq/5Z8cdskzJujfwqfOTkrwIwj7IRISpnkJnT6SyJ4PCPnGMoFjC9ddhal5KVIYtAt97ix05A=="
 		},
 		"node_modules/bootstrap": {
-			"version": "5.2.3",
-			"resolved": "https://registry.npmjs.org/bootstrap/-/bootstrap-5.2.3.tgz",
-			"integrity": "sha512-cEKPM+fwb3cT8NzQZYEu4HilJ3anCrWqh3CHAok1p9jXqMPsPTBhU25fBckEJHJ/p+tTxTFTsFQGM+gaHpi3QQ==",
+			"version": "5.3.1",
+			"resolved": "https://registry.npmjs.org/bootstrap/-/bootstrap-5.3.1.tgz",
+			"integrity": "sha512-jzwza3Yagduci2x0rr9MeFSORjcHpt0lRZukZPZQJT1Dth5qzV7XcgGqYzi39KGAVYR8QEDVoO0ubFKOxzMG+g==",
 			"funding": [
 				{
 					"type": "github",
@@ -1703,7 +1703,7 @@
 				}
 			],
 			"peerDependencies": {
-				"@popperjs/core": "^2.11.6"
+				"@popperjs/core": "^2.11.8"
 			}
 		},
 		"node_modules/bootstrap-icons": {
