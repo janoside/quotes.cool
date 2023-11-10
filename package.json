@@ -5,7 +5,7 @@
 	"main": "app.js",
 	"dependencies": {
 		"app-utils": "file:./app/app-utils",
-		"bootstrap": "5.3.1",
+		"bootstrap": "^5.3.2",
 		"bootstrap-icons": "^1.5.0",
 		"cookie-parser": "^1.4.5",
 		"debug": "^4.3.2",
@@ -15,7 +15,7 @@
 		"express-session": "^1.17.2",
 		"http-errors": "^2.0.0",
 		"luxon": "^3.1.0",
-		"marked": "^5.0.0",
+		"marked": "^9.0.0",
 		"morgan": "^1.10.0",
 		"pug": "^3.0.2",
 		"simple-git": "^3.7.1"

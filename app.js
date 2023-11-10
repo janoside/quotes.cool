@@ -6,9 +6,13 @@ const path = require("path");
 const cookieParser = require("cookie-parser");
 const logger = require("morgan");
 const session = require("express-session");
-const { marked } = require("marked");
 const simpleGit = require("simple-git");
 const { DateTime } = require("luxon");
+
+const { marked } = require("marked");
+marked.use({
+	headerIds: false
+});
 
 const app = require("./app/app.js");
 
