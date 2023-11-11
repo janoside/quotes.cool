@@ -88,6 +88,9 @@ $article-color-selected-text: darken($blue, 5%);
 @import "./main";
 
 
+.table {
+	--bs-table-color-state: $body-color;
+}
 
 
 .alert-primary {
