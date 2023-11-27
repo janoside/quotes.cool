@@ -235,6 +235,14 @@ router.get("/quote/:quoteId", asyncHandler(async (req, res, next) => {
 	const quoteId = req.params.quoteId;
 	const quote = await db.findOne("quotes", {_id:quoteId});
 
+	if (!quote.views) {
+		quote.views = 0;
+	}
+
+	quote.views++;
+
+	const updateResult = await db.updateOne("quotes", {_id:quoteId}, {$set: quote});
+
 	if (req.session.username != quote.username) {
 		res.redirect("/");
 
@@ -250,6 +258,14 @@ router.get("/quote/:quoteId", asyncHandler(async (req, res, next) => {
 router.get("/share/:quoteId", asyncHandler(async (req, res, next) => {
 	const quoteId = req.params.quoteId;
 	const quote = await db.findOne("quotes", {_id:quoteId});
+
+	if (!quote.publicViews) {
+		quote.publicViews = 0;
+	}
+
+	quote.publicViews++;
+
+	const updateResult = await db.updateOne("quotes", {_id:quoteId}, {$set: quote});
 
 	res.locals.quote = quote;
 
