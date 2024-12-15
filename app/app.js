@@ -302,7 +302,7 @@ async function createList(user, name, tagsAnd, tagsOr, excludedTagsOr, speakersA
 
 	let listId = await db.insertOne("quoteLists", quoteList);
 
-	return await db.findOne("quoteLists", {_id:ObjectId(listId)});
+	return await db.findOne("quoteLists", {_id:listId});
 }
 
 async function addQuote(user, quote) {
