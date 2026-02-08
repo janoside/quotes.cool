@@ -15,7 +15,7 @@ Basic setup
 	apt install net-tools iotop ncdu unzip
 	
 	# install npm, nginx, certbot
-	apt install nginx python3-certbot-nginx
+	apt install nginx python3-certbot-nginx python3-certbot-dns-route53
 	
 	# install pm2
 	npm install -g pm2
@@ -88,15 +88,18 @@ Clone and Start
 
 	git clone https://github.com/janoside/quotes.cool
 	cd quotes.cool
+	git submodule update --init --recursive
 	npm i
 	pm2 start bin/main.js --name quotes
+
+Certbot
+
+	certbot certonly --dns-route53 -d quotes.cool
 
 Configure Nginx
 
 	ln -s /root/quotes.cool/conf/nginx.conf /etc/nginx/sites-available/quotes.cool
-	cd /etc/nginx/sites-enabled/
-	certbot -d quotes.cool
-	ln -s ../sites-available/quotes.cool .
+	ln -s /etc/nginx/sites-available/quotes.cool /etc/nginx/sites-enabled/quotes.cool
 	unlink default
 	service nginx restart
 	  

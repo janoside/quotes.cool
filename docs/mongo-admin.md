@@ -1,14 +1,10 @@
-## Mongo Administration
+# Mongo Administration
 
-To restore from backups `tgz` files (containing `bson` files):
+### restore bson/metadata.json files in a directory:
 
-    mongorestore -u admin -d DATABASE_NAME -c COLLECTION_NAME --authenticationDatabase admin COLLECTION_NAME.bson
+    mongorestore --host localhost --port 27017 \
+      --username admin \
+      --authenticationDatabase admin \
+      --nsInclude "DATABASE_NAME_EVEN_IF_NONEXISTENT.*" path/to/bson/directory/ \
+      -p ""
 
-
-
-Uninstall mongodb
-
-    service mongod stop
-	apt-get purge mongodb-org*
-	rm -r /var/log/mongodb
-	rm -r /var/lib/mongodb
