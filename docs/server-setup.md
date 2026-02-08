@@ -12,7 +12,7 @@ Basic setup
 	curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.4/install.sh | bash
 	
 	# install misc tools
-	apt install net-tools iotop ncdu unzip
+	apt install net-tools iotop ncdu unzip python3-pip
 	
 	# install npm, nginx, certbot
 	apt install nginx python3-certbot-nginx python3-certbot-dns-route53
@@ -115,13 +115,11 @@ Configure Backups
 	./aws/install
 	aws --version
 	aws configure # enter AWS credentials
-	
-	wget "https://raw.githubusercontent.com/janoside/quotes.cool/master/docs/backup.sh"
-	# edit backup.sh:
-	# enter mongodb "backups" user password and AWS profile name (from ~/.aws/credentials file)
+
+	python3 -m venv /root/quotes.cool/tools
+	/root/quotes.cool/tools/bin/pip install -r /root/quotes.cool/tools/requirements.txt
 	
 	crontab -e
 	# configuration helper: https://crontab.guru/
-	# add line like below (run every 3 hrs, 17-min after the hour)
-	# 5 0,12 * * * /root/quotes.cool/backup.sh > /root/quotes.cool/backup.log 2>&1
-
+	# add line like below (run daily at 3:05)
+	# 5 3 * * * /root/quotes.cool/tools/bin/python /root/quotes.cool/tools/backup-db.py > /root/quotes.cool/backup.log 2>&1
